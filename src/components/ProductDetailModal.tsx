@@ -1,5 +1,5 @@
 import { Button, ConfigProvider, Modal } from "antd";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { IDevices } from "@/interfaces/devices";
 import InsuranceDiv from "@/pages/productCatalog/components/insuranceDiv";
@@ -58,10 +58,14 @@ export default function ProductDetailModal({
 
     const fallbackImage = getFallbackImage(productDetail);
     const showCarousel = images.length > 0;
-    const showFallbackImage = !showCarousel && productDetail?.technical_sheet === null && !!fallbackImage;
+    const showFallbackImage = !showCarousel && !!fallbackImage;
     const normalizedInstallments = [1, 10, 12, 24].includes(Number(parcelamentoQtd))
         ? Number(parcelamentoQtd)
         : 24;
+
+    useEffect(() => {
+        setCurrentIndex(0);
+    }, [productDetail?.id, images.length]);
 
     return (
         <Modal

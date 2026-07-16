@@ -5,12 +5,20 @@ export default function InsuranceDiv({
 }: {
   productDetail: any;
 }) {
+  const technicalTable =
+    productDetail?.technical_sheet?.tabela ?? productDetail?.fichaTecnica?.tabela ?? {};
+
+  const productCode = productDetail?.sap_code ?? productDetail?.cod_sap ?? "-";
+  const productModel = productDetail?.model ?? productDetail?.name ?? "-";
+  const price10x = productDetail?.price_10x ?? productDetail?.preco10x;
+  const price24x = productDetail?.price_24x ?? productDetail?.preco24x;
+
   return (
     <>
       <div className="text-[#666666] w-7/7 md:w-5/7 lg:w-5/7 overflow-auto overflow-y-auto max-h-[200px] md:max-h-full lg:max-h-full  scrollbar scrollbar-thin">
         {productDetail?.valor_roubo_furto_simples_qualificado !== null &&
           productDetail?.valor_roubo_furto_simples_qualificado_danos !==
-            null && (
+          null && (
             <div className="border-1 border-[#eeeeee] p-1 mx-1 flex flex-col gap-2 shadow-sm">
               <div className="flex items-center justify-center">
                 <img width={120} src="/assets/seguro-z.png"></img>
@@ -46,13 +54,13 @@ export default function InsuranceDiv({
               Código do produto
             </span>
             <span className=" p-2 w-3/5 text-[16px]  font-light text-[#353535]">
-              {productDetail?.cod_sap}
+              {productCode}
             </span>
           </div>
           <div className="flex 2-full border-1 border-[#eeeeee]">
             <span className="bg-[#eeeeee] text-[14px] p-2 w-2/5">Modelo</span>
             <span className=" p-2 w-3/5 text-[16px] font-light text-[#353535]">
-              {productDetail?.name}
+              {productModel}
             </span>
           </div>
 
@@ -61,7 +69,9 @@ export default function InsuranceDiv({
               Valor da parcela em 10x
             </span>
             <span className=" p-2 w-3/5 text-[16px]  font-light text-[#353535]">
-              R$ {productDetail?.preco10x?.toFixed(2).replace(".", ",")}
+              {typeof price10x === "number"
+                ? `R$ ${price10x.toFixed(2).replace(".", ",")}`
+                : "-"}
             </span>
           </div>
           <div className="flex 2-full border-1 border-[#eeeeee]">
@@ -69,11 +79,13 @@ export default function InsuranceDiv({
               Valor da parcela em 24x
             </span>
             <span className=" p-2 w-3/5 text-[16px]  font-light text-[#353535]">
-              R$ {productDetail?.preco24x?.toFixed(2).replace(".", ",")}
+              {typeof price24x === "number"
+                ? `R$ ${price24x.toFixed(2).replace(".", ",")}`
+                : "-"}
             </span>
           </div>
 
-          {Object.entries(productDetail?.fichaTecnica?.tabela || {}).map(
+          {Object.entries(technicalTable).map(
             ([sectionKey, sectionValue]) => {
               if (Array.isArray(sectionValue)) {
                 return null;
@@ -90,7 +102,7 @@ export default function InsuranceDiv({
                   </div>
                   {Object.entries(sectionValue as Record<string, unknown>).map(
                     ([fieldKey, rawValue]) => {
-                      let formattedValue: string | React.ReactNode = "";
+                      let formattedValue = "";
 
                       if (typeof rawValue === "boolean") {
                         formattedValue = translate(rawValue ? "true" : "false");

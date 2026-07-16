@@ -39,7 +39,9 @@ export class PurchaseService {
     if (!id) {
       return null;
     }
-    const res = await api.get(`/telecom/vivo/orders/${id}`);
+    const res = await api.get(`/telecom/vivo/orders/${id}`, {
+      headers: this.getOrderTokenHeaders(id),
+    });
 
     const responseData = res.data;
     const responseToken = responseData?.order_token;

@@ -189,7 +189,8 @@ const InfoPaymentChartPage = ({ purchaseById }: IInfoPaymentChartPage) => {
         </div>
         <div className="hidden md:grid grid-cols-2 gap-4 text-[14px] w-full text-neutral-700">
           <p>
-            <strong>Complemento:</strong> {purchaseById?.address_complement || "-"}
+            <strong>Complemento:</strong>{" "}
+            {purchaseById?.address_complement?.home_complement || "-"}
           </p>
           <p>
             <strong>Observações: </strong>{" "}
@@ -199,7 +200,8 @@ const InfoPaymentChartPage = ({ purchaseById }: IInfoPaymentChartPage) => {
         {/* Mobile: Telefone e Email em coluna */}
         <div className="flex flex-col gap-2 md:hidden text-[14px] w-full text-neutral-700">
           <p>
-            <strong>Complemento:</strong> {purchaseById?.address_complement || "-"}
+            <strong>Complemento:</strong>{" "}
+            {purchaseById?.address_complement?.home_complement || "-"}
           </p>
           <p>
             <strong>Observações:</strong>{" "}

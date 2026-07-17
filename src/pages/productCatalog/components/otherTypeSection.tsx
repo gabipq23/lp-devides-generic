@@ -50,20 +50,12 @@ export function OtherTypeSection() {
                 </div>
 
                 <div className="p-4 md:p-4 bg-[#660099] text-white flex flex-col justify-between gap-6">
-                    {/* <div className="space-y-3">
-                      
-                        <h3 className="text-2xl font-light">{typeConfig.otherType}</h3>
-                        <p className="text-sm leading-6 text-neutral-300">
-                            Redirecione com preservação de parceiro e versão para a outra LP.
-                        </p>
-                    </div> */}
 
-                    {/* <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm"> */}
+
                     <div className="flex gap-3">
                         {products
                             ?.filter((product: any) => product.online)
                             .slice(0, 3)
-
                             .map((product: any, index: number) => (
                                 <div
                                     key={product.id}
@@ -81,13 +73,9 @@ export function OtherTypeSection() {
                                     {/* Informações */}
                                     <div className="flex-1 flex flex-col gap-1">
 
-
                                         <h3 className="text-sm font-semibold text-white line-clamp-2">
                                             {product.model}
                                         </h3>
-
-
-
                                         <span className="text-xs text-neutral-300 mt-1">
                                             24x de{" "}
                                             <strong className="text-white">
@@ -96,18 +84,7 @@ export function OtherTypeSection() {
                                         </span>
                                     </div>
 
-                                    {/* Botão */}
-                                    {/* <Button
-                                        type="primary"
-                                        className="bg-purple-600 hover:bg-purple-700"
-                                        onClick={() => {
-                                            const params = new URLSearchParams(location.search);
-                                            params.set("produto", String(product.cod_sap));
-                                            navigate({ search: params.toString() });
-                                        }}
-                                    >
-                                        Eu quero
-                                    </Button> */}
+
                                 </div>
                             ))}
                     </div>

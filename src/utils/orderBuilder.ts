@@ -50,19 +50,6 @@ function getRandomOrderProductColor(colors: string[]) {
   return colors[randomIndex] ?? "";
 }
 
-function getInsurancePrice(product: OrderProductLike) {
-  const candidateValues = [
-    product.insurance_theft,
-    product.insurance_theft_damages,
-  ].filter((value): value is number => typeof value === "number" && value > 0);
-
-  if (candidateValues.length === 0) {
-    return null;
-  }
-
-  return Math.min(...candidateValues);
-}
-
 function buildOrderItem(product: OrderProductLike): Item {
   const unitPrice = Number(product.price_24x ?? product.price_24x ?? 0) * 24;
   const installmentAmount = Number(product.price_24x ?? product.price_24x ?? 0);
@@ -75,7 +62,7 @@ function buildOrderItem(product: OrderProductLike): Item {
     device_id: product.id,
     item_id: 0,
     installment_amount: installmentAmount,
-    insurance_price: getInsurancePrice(product),
+    insurance_price: null,
     insurance_type: null,
     model: getOrderProductName(product),
     quantity: 1,
@@ -138,17 +125,9 @@ export function buildCreateOrderPayload(
     order_number: undefined,
     partner_id: resolvedPartnerId,
     url: undefined,
-    is_partner_customer: false,
     cnpj: formValues.cnpj,
-    company_legal_name: formValues.full_name,
-    company_rfb_information: {
-      opcao_pelo_mei: null,
-      porte: null,
-      situacao_cadastral: null,
-    },
     additional_email: undefined,
     additional_operator: undefined,
-    additional_phone: formValues.phone,
     additional_phone_valid: undefined,
     additional_portability: undefined,
     additional_portability_date: undefined,
@@ -159,11 +138,6 @@ export function buildCreateOrderPayload(
     phone_valid: undefined,
     portability: undefined,
     portability_date: undefined,
-    manager: {
-      email: null,
-      name: formValues.full_name,
-      phone: formValues.phone,
-    },
     address: undefined,
     address_complement: undefined,
     address_note: undefined,
@@ -174,11 +148,6 @@ export function buildCreateOrderPayload(
     zip_code: undefined,
     items,
     total_number_of_devices: items.length,
-    client_credit: {
-      available_credit: 0,
-      available_equipment_credit: null,
-      eligible_line: [],
-    },
     payment_method: "fatura vivo",
     price_summary: {
       credit_used: 0,

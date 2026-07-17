@@ -48,7 +48,7 @@ export interface IOrder {
 
   // ================= ENDEREÇO =================
   address: string | null;
-  address_complement: string;
+  address_complement: { home_complement: string };
   address_note: string;
   address_number: string | null;
   city: string | null;

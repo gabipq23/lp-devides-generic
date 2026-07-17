@@ -127,7 +127,7 @@ const CartSteps: React.FC<AppProps> = (appProps) => {
 
                   <div className="flex justify-between mt-2 gap-2">
                     <p className="text-[14px] w-auto">
-                      Orçamento Nº: {appProps.purchaseData?.id}
+                      Orçamento Nº: {appProps.purchaseData?.order?.id}
                     </p>
                     <ConfigProvider
                       theme={{
@@ -208,7 +208,7 @@ const CartSteps: React.FC<AppProps> = (appProps) => {
                       </Button>
                     </div>
                     <p className="text-[14px] md:text-[15px] lg:text-[17px] text-end  self-end w-61">
-                      Orçamento Nº: {appProps.purchaseData?.id}
+                      Orçamento Nº: {resolvedPurchaseId}
                     </p>
                   </div>
                 </ConfigProvider>

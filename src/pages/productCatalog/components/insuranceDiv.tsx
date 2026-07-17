@@ -6,37 +6,37 @@ export default function InsuranceDiv({
   productDetail: any;
 }) {
   const technicalTable =
-    productDetail?.technical_sheet?.tabela ?? productDetail?.fichaTecnica?.tabela ?? {};
+    productDetail?.technical_sheet?.tabela ?? {};
 
-  const productCode = productDetail?.sap_code ?? productDetail?.cod_sap ?? "-";
-  const productModel = productDetail?.model ?? productDetail?.name ?? "-";
-  const price10x = productDetail?.price_10x ?? productDetail?.preco10x;
-  const price24x = productDetail?.price_24x ?? productDetail?.preco24x;
+  const productCode = productDetail?.sap_code ?? "-";
+  const productModel = productDetail?.model ?? "-";
+  const price10x = productDetail?.price_10x ?? "-"
+  const price24x = productDetail?.price_24x ?? "-"
 
   return (
     <>
       <div className="text-[#666666] w-7/7 md:w-5/7 lg:w-5/7 overflow-auto overflow-y-auto max-h-[200px] md:max-h-full lg:max-h-full  scrollbar scrollbar-thin">
-        {productDetail?.valor_roubo_furto_simples_qualificado !== null &&
-          productDetail?.valor_roubo_furto_simples_qualificado_danos !==
+        {productDetail?.insurance_theft !== null &&
+          productDetail?.insurance_theft_damages !==
           null && (
             <div className="border-1 border-[#eeeeee] p-1 mx-1 flex flex-col gap-2 shadow-sm">
               <div className="flex items-center justify-center">
                 <img width={120} src="/assets/seguro-z.png"></img>
               </div>
               <div>
-                {productDetail?.valor_roubo_furto_simples_qualificado && (
+                {productDetail?.insurance_theft && (
                   <p>
                     Roubo, Furto, Simples e Qualificado: R${" "}
-                    {productDetail?.valor_roubo_furto_simples_qualificado
+                    {productDetail?.insurance_theft
                       ?.toFixed(2)
                       .replace(".", ",")}
                     /mês
                   </p>
                 )}
-                {productDetail?.valor_roubo_furto_simples_qualificado_danos && (
+                {productDetail?.insurance_theft_damages && (
                   <p>
                     Roubo, Furto, Simples, Qualificado e Danos: R${" "}
-                    {productDetail?.valor_roubo_furto_simples_qualificado_danos
+                    {productDetail?.insurance_theft_damages
                       ?.toFixed(2)
                       .replace(".", ",")}
                     /mês

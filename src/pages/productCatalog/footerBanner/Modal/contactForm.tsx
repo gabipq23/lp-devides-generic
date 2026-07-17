@@ -14,7 +14,7 @@ import { PatternFormat, PatternFormatProps } from "react-number-format";
 const PhoneInput = (props: PatternFormatProps) => (
   <PatternFormat
     {...props}
-    format="(##) #####-####"
+    format="## (##) #####-####"
     customInput={Input}
     size="middle"
   />
@@ -120,14 +120,20 @@ export const Contact: React.FC<ContactProps> = ({
         <Form.Item
           label="CNPJ"
           name="cnpj"
-          rules={[{ required: true, message: "Campo obrigatório" }]}
+          rules={[
+            { required: true, message: "Campo obrigatório" },
+            {
+              pattern: /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
+              message: "CNPJ inválido",
+            },
+          ]}
         >
           <CNPJInput format="XX.XXX.XXX/XXXX-XX" />
         </Form.Item>
         <Form.Item
           label="Telefone"
           name="phone"
-          rules={[{ required: true, message: "Campo obrigatório" }]}
+          rules={[{ required: true, message: "Campo obrigatório" }, { pattern: /^\(\d{2}\) \d{5}-\d{4}$/, message: "Telefone inválido" }]}
         >
           <PhoneInput format="(XX) XXXXX-XXXX" />
         </Form.Item>

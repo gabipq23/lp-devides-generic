@@ -1,4 +1,3 @@
-
 import { formatCNPJ } from "@/utils/formatCNPJ";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import type { CollapseProps } from "antd";
@@ -20,10 +19,17 @@ import ConfirmDataModal from "./modalConfirmData";
 import { PatternFormat, PatternFormatProps } from "react-number-format";
 import { IOrderResponse } from "@/interfaces/order";
 
+type BuyerInfoFormValues = {
+  additional_email?: string;
+  additional_phone?: string;
+  full_name?: string;
+  phone?: string;
+};
+
 const PhoneInput = (props: PatternFormatProps) => (
   <PatternFormat
     {...props}
-    format="(##) #####-####"
+    format="## (##) #####-####"
     customInput={Input}
     placeholder="Telefone"
     size="middle"
@@ -37,12 +43,12 @@ function BuyerInfo({
   updateData: (payload: Record<string, unknown>) => Promise<unknown>;
   purchaseById: IOrderResponse | undefined | null;
 }) {
-
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const closeModal = () => setShowConfirmModal(false);
   const purchase = purchaseById?.order;
+
   useEffect(() => {
     if (purchase) {
       form.setFieldsValue({
@@ -54,11 +60,37 @@ function BuyerInfo({
     }
   }, [purchase, form]);
 
-  const handleEmailSubmit = async () => {
-    const value = await form.validateFields(["additional_email"]);
-    const success = await updateData({
-      additional_email: value.additional_email,
-    });
+  const normalizePhone = (value?: string | null) =>
+    (value ?? "").replace(/\D/g, "");
+
+  const handleEditSubmit = async () => {
+    const values = await form.validateFields();
+    const typedValues = values as BuyerInfoFormValues;
+    const payload: Record<string, unknown> = {};
+
+    if ((typedValues.additional_email ?? "") !== (purchase?.additional_email ?? "")) {
+      payload.additional_email = typedValues.additional_email ?? "";
+    }
+
+    if (normalizePhone(typedValues.additional_phone) !== normalizePhone(purchase?.additional_phone)) {
+      payload.additional_phone = normalizePhone(typedValues.additional_phone);
+    }
+
+    if ((typedValues.full_name ?? "") !== (purchase?.full_name ?? "")) {
+      payload.full_name = typedValues.full_name ?? "";
+    }
+
+    if (normalizePhone(typedValues.phone) !== normalizePhone(purchase?.phone)) {
+      payload.phone = normalizePhone(typedValues.phone);
+    }
+
+    if (Object.keys(payload).length === 0) {
+      setIsEditing(false);
+      return;
+    }
+
+    const success = await updateData(payload);
+
     if (success) {
       setShowConfirmModal(true);
       Modal.success({
@@ -70,54 +102,14 @@ function BuyerInfo({
     }
   };
 
-  const handlePhoneSubmit = async () => {
-    const value = await form.validateFields(["additional_phone"]);
-    const telefoneSemMascara = value.additional_phone.replace(/\D/g, "");
-    const success = await updateData({
-      additional_phone: telefoneSemMascara,
+  const handleCancelEdit = () => {
+    form.setFieldsValue({
+      additional_email: purchase?.additional_email,
+      additional_phone: purchase?.additional_phone,
+      full_name: purchase?.full_name,
+      phone: purchase?.phone,
     });
-    if (success) {
-      setShowConfirmModal(true);
-      Modal.success({
-        title: "Informação enviada",
-        content:
-          "Um consultor irá confirmar essas informações com você nos próximos dias.",
-      });
-      setIsEditing(false);
-    }
-  };
-
-  const handleBuyerNameSubmit = async () => {
-    const value = await form.validateFields(["full_name"]);
-    const success = await updateData({
-      full_name: value.full_name,
-    });
-    if (success) {
-      setShowConfirmModal(true);
-      Modal.success({
-        title: "Informação enviada",
-        content:
-          "Um consultor irá confirmar essas informações com você nos próximos dias.",
-      });
-      setIsEditing(false);
-    }
-  };
-
-  const handleBuyerPhoneSubmit = async () => {
-    const value = await form.validateFields(["phone"]);
-    const telefoneSemMascara = value.phone.replace(/\D/g, "");
-    const success = await updateData({
-      phone: telefoneSemMascara,
-    });
-    if (success) {
-      setShowConfirmModal(true);
-      Modal.success({
-        title: "Informação enviada",
-        content:
-          "Um consultor irá confirmar essas informações com você nos próximos dias.",
-      });
-      setIsEditing(false);
-    }
+    setIsEditing(false);
   };
 
   let equalName = false;
@@ -141,42 +133,30 @@ function BuyerInfo({
   const info = (
     <>
       <div className="flex flex-col w-full text-neutral-800 gap-2 rounded-lg min-h-[120px] p-4">
-        <div className="  gap-4 text-[14px] w-full text-neutral-700">
+        <div className="gap-4 text-[14px] w-full text-neutral-700">
           <p className=" ">
             <strong>Razão Social:</strong> {purchase?.company_legal_name || "-"}
           </p>
         </div>
-        {/* CNPJ e Gestor da conta */}
-        <div className="hidden md:grid grid-cols-2  gap-4 text-[14px] w-full text-neutral-700">
+
+        {/* Desktop */}
+        <div className="hidden md:grid grid-cols-2 gap-4 text-[14px] w-full text-neutral-700">
           <p>
             <strong>CNPJ:</strong> {formatCNPJ(purchase?.cnpj ?? "") || "-"}
           </p>
           <p>
             <strong>Gestor da conta:</strong> {purchase?.manager?.name || "-"}
           </p>
-        </div>
-        {/* Mobile: CNPJ e Gestor da conta */}
-        <div className="flex flex-col gap-2 md:hidden text-[14px] w-full text-neutral-700">
           <p>
-            <strong>CNPJ:</strong> {formatCNPJ(purchase?.cnpj ?? "") || "-"}
+            <strong>Email:</strong> {purchase?.manager?.email || "-"}
           </p>
           <p>
-            <strong>Gestor da conta:</strong> {purchase?.manager?.name || "-"}
-          </p>
-        </div>
-        {/* Telefone e Email */}
-        <div className="hidden md:grid grid-cols-2 gap-4 text-[14px]  w-full text-neutral-700">
-          <p>
-            <strong>Email :</strong> {purchase?.manager?.email || "-"}
-          </p>
-          <p>
-            <strong>Telefone :</strong>{" "}
+            <strong>Telefone:</strong>{" "}
             {formatPhoneNumber(purchase?.manager?.phone ?? "") || "-"}
           </p>
-        </div>
-        {!isEditing ? (
-          <>
-            <div className="hidden md:grid grid-cols-2 gap-4 text-[14px] w-full   text-neutral-700">
+
+          {!isEditing ? (
+            <>
               {purchase?.additional_email !== null && (
                 <p>
                   <strong>Novo Email:</strong>{" "}
@@ -189,365 +169,248 @@ function BuyerInfo({
                   {formatPhoneNumber(purchase?.additional_phone ?? "") || "-"}
                 </p>
               )}
-            </div>
-            {/* )} */}
-          </>
-        ) : (
-          <>
-            <div className=" flex flex-col text-[14px] w-full   text-neutral-600">
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Input: {
-                      hoverBorderColor: "#660099",
-                      activeBorderColor: "#660099",
-                      activeShadow: "none",
-                      colorBorder: "#bfbfbf",
-                      colorTextPlaceholder: "#666666",
-                    },
-                    Button: {
-                      colorBorder: "#660099",
-                      colorText: "#660099",
-                      colorPrimary: "#660099",
-                      colorPrimaryHover: "#883fa2",
-                    },
-                  },
-                }}
-              >
-                {isEditing && (
-                  <Form
-                    form={form}
-                    layout="vertical"
-                    className="md:grid grid-cols-2 gap-4  max-h-[100px]"
-                  >
-                    <div className="flex gap-4 text-[14px]   w-full text-neutral-700">
-                      <p className="">
-                        <strong>Novo Email:</strong>
-                      </p>
-                      <div className="flex gap-2">
-                        <Form.Item
-                          className="flex text-[16px]  font-light text-[#353535]"
-                          name="additional_email"
-                          rules={[
-                            {
-                              pattern:
-                                /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                              message: "Email inválido",
-                            },
-                          ]}
-                        >
-                          <Input
-                            maxLength={40}
-                            className="p-2 text-[16px] min-w-[300px] font-light text-[#353535] "
-                            placeholder="Email"
-                          />
-                        </Form.Item>
-                      </div>
-                      <div className="mt-0.5">
-                        <Button
-                          size="small"
-                          type="primary"
-                          variant="solid"
-                          style={{
-                            fontSize: "12px",
-                            height: "30px",
-                          }}
-                          htmlType="submit"
-                          onClick={handleEmailSubmit}
-                        >
-                          Salvar
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 text-[14px] w-full text-neutral-700">
-                      <p>
-                        <strong>Novo Telefone: </strong>
-                      </p>
-                      <div className="flex gap-2">
-                        <Form.Item
-                          className="flex  text-[16px] font-light text-[#353535]"
-                          name="additional_phone"
-                        >
-                          <PhoneInput format="(XX) XXXXX-XXXX" />
-                        </Form.Item>
-                      </div>
-                      <div className="mt-0.5">
-                        <Button
-                          size="small"
-                          type="primary"
-                          variant="solid"
-                          style={{
-                            fontSize: "12px",
-                            height: "30px",
-                          }}
-                          htmlType="submit"
-                          onClick={handlePhoneSubmit}
-                        >
-                          Salvar
-                        </Button>
-                      </div>
-                    </div>
-                  </Form>
-                )}
-              </ConfigProvider>
-            </div>
-          </>
-        )}{" "}
-        <div className="hidden md:grid grid-cols-2 gap-2 text-[14px] w-full text-neutral-700">
-          <p className="flex gap-2 h-10">
-            <strong className="w-[140px]">Nome (Comprador) :</strong>
-            {isEditing ? (
-              <Form
-                form={form}
-                layout="vertical"
-                className="md:grid grid-cols-2 gap-4  max-h-[100px]"
-              >
-                <div className="flex gap-2 ml-3">
-                  <Form.Item
-                    className="flex text-[16px]  font-light text-[#353535]"
-                    name="full_name"
-                  >
-                    <Input
-                      maxLength={40}
-                      className="p-2 text-[16px] min-w-[300px] font-light text-[#353535] "
-                      placeholder="Nome"
-                    />
-                  </Form.Item>
-                  <div className="mt-0.5">
-                    <Button
-                      size="small"
-                      type="primary"
-                      variant="solid"
-                      style={{
-                        fontSize: "12px",
-                        height: "30px",
-                      }}
-                      htmlType="submit"
-                      onClick={handleBuyerNameSubmit}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
-                </div>{" "}
-              </Form>
-            ) : (
-              <span className="flex  gap-2 items-start">
-                {purchase?.full_name || "-"}
-                {equalName && (
-                  <Tooltip
-                    title="Nome do comprador igual ao do gestor cadastrado na Vivo"
-                    placement="top"
-                    styles={{ body: { fontSize: "11px" } }}
-                  >
-                    <span className="text-green-800 cursor-pointer">
-                      <CheckCircleOutlined />
-                    </span>
-                  </Tooltip>
-                )}
-              </span>
-            )}
-          </p>
-
-          <p className="flex gap-2 h-10">
-            <strong className="w-[160px]">Telefone (Comprador) :</strong>{" "}
-            {isEditing ? (
-              <Form
-                form={form}
-                layout="vertical"
-                className="md:grid grid-cols-2 gap-4  max-h-[100px]"
-              >
-                <div className="flex gap-2  ml-3">
-                  <Form.Item
-                    className="flex text-[16px]  font-light text-[#353535]"
-                    name="phone"
-                  >
-                    <PhoneInput format="(XX) XXXXX-XXXX" />
-                  </Form.Item>
-                  <div className="mt-0.5">
-                    <Button
-                      size="small"
-                      type="primary"
-                      variant="solid"
-                      style={{
-                        fontSize: "12px",
-                        height: "30px",
-                      }}
-                      htmlType="submit"
-                      onClick={handleBuyerPhoneSubmit}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
-                </div>{" "}
-              </Form>
-            ) : (
-              <span className="flex  gap-2 items-start">
-                {formatPhoneNumber(purchase?.phone ?? "") ||
-                  "-"}
-                {equalPhone && (
-                  <Tooltip
-                    title="Telefone do comprador igual ao do gestor cadastrado na Vivo"
-                    placement="top"
-                    styles={{ body: { fontSize: "11px" } }}
-                  >
-                    <span className="text-green-800 cursor-pointer">
-                      <CheckCircleOutlined />
-                    </span>
-                  </Tooltip>
-                )}
-              </span>
-            )}
-          </p>
+              {purchase?.full_name !== null && (
+                <p>
+                  <strong>Nome (Comprador):</strong>{" "}
+                  {purchase?.full_name || "-"}
+                </p>
+              )}
+              {purchase?.additional_phone !== null && (
+                <p>
+                  <strong>Telefone (Comprador):</strong>{" "}
+                  {formatPhoneNumber(purchase?.phone ?? "") ||
+                    "-"}  {equalPhone && (
+                      <Tooltip
+                        title="Telefone do comprador igual ao do gestor cadastrado na Vivo"
+                        placement="top"
+                        styles={{ body: { fontSize: "11px" } }}
+                      >
+                        <span className="text-green-800 cursor-pointer">
+                          <CheckCircleOutlined />
+                        </span>
+                      </Tooltip>
+                    )}</p>
+              )}
+            </>
+          ) : null}
         </div>
-        {/* Mobile: Telefone e Email em coluna */}
+
+        {/* Mobile */}
         <div className="flex flex-col gap-2 md:hidden text-[14px] w-full text-neutral-700">
           <p>
-            <strong>Telefone :</strong>{" "}
-            {formatPhoneNumber(purchase?.phone ?? "") || "-"}
+            <strong>CNPJ:</strong> {formatCNPJ(purchase?.cnpj ?? "") || "-"}
           </p>
           <p>
-            <strong>Email :</strong> {purchase?.manager?.email || "-"}
+            <strong>Gestor da conta:</strong> {purchase?.manager?.name || "-"}
           </p>
-        </div>
-        {/* Mobile: Telefone e Email em coluna */}
-        <div className="flex flex-col gap-2 md:hidden text-[14px] w-full text-neutral-700">
-          <p className="flex gap-2 h-10">
-            <strong className="w-[140px]">Nome (Comprador) :</strong>
-            {isEditing ? (
-              <Form
-                form={form}
-                layout="vertical"
-                className="md:grid grid-cols-2 gap-4  max-h-[100px]"
-              >
-                <div className="flex gap-2 ml-3">
-                  <Form.Item
-                    className="flex text-[16px]  font-light text-[#353535]"
-                    name="full_name"
-                  >
-                    <Input
-                      maxLength={40}
-                      className="p-2 text-[16px] min-w-[300px] font-light text-[#353535] "
-                      placeholder="Nome"
-                    />
-                  </Form.Item>
-                  <div className="mt-0.5">
-                    <Button
-                      size="small"
-                      type="primary"
-                      variant="solid"
-                      style={{
-                        fontSize: "12px",
-                        height: "30px",
-                      }}
-                      htmlType="submit"
-                      onClick={handleBuyerNameSubmit}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
-                </div>{" "}
-              </Form>
-            ) : (
-              <span className="flex  gap-2 items-start">
-                {purchase?.full_name || "-"}
-                {equalName && (
-                  <Tooltip
-                    title="Nome do comprador igual ao do gestor cadastrado na Vivo"
-                    placement="top"
-                    styles={{ body: { fontSize: "11px" } }}
-                  >
-                    <span className="text-green-800 cursor-pointer">
-                      <CheckCircleOutlined />
-                    </span>
-                  </Tooltip>
-                )}
-              </span>
-            )}
+          <p>
+            <strong>Telefone:</strong>{" "}
+            {formatPhoneNumber(purchase?.manager?.phone ?? "") || "-"}
+          </p>
+          <p>
+            <strong>Email:</strong> {purchase?.manager?.email || "-"}
           </p>
 
-          <p className="flex gap-2 h-10">
-            <strong className="w-[160px]">Telefone (Comprador) :</strong>{" "}
-            {isEditing ? (
-              <Form
-                form={form}
-                layout="vertical"
-                className="md:grid grid-cols-2 gap-4  max-h-[100px]"
-              >
-                <div className="flex gap-2  ml-3">
-                  <Form.Item
-                    className="flex text-[16px]  font-light text-[#353535]"
-                    name="phone"
-                  >
-                    <PhoneInput format="(XX) XXXXX-XXXX" />
-                  </Form.Item>
-                  <div className="mt-0.5">
-                    <Button
-                      size="small"
-                      type="primary"
-                      variant="solid"
-                      style={{
-                        fontSize: "12px",
-                        height: "30px",
-                      }}
-                      htmlType="submit"
-                      onClick={handleBuyerPhoneSubmit}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
-                </div>{" "}
-              </Form>
-            ) : (
-              <span className="flex  gap-2 items-start">
-                {formatPhoneNumber(purchase?.phone ?? "") ||
-                  "-"}
-                {equalPhone && (
-                  <Tooltip
-                    title="Telefone do comprador igual ao do gestor cadastrado na Vivo"
-                    placement="top"
-                    styles={{ body: { fontSize: "11px" } }}
-                  >
-                    <span className="text-green-800 cursor-pointer">
-                      <CheckCircleOutlined />
-                    </span>
-                  </Tooltip>
-                )}
-              </span>
-            )}
-          </p>
         </div>
-        <div className="cursor-poiter">
-          <ExclamationCircleOutlined /> Estes são os dados de contato
-          cadastrados na Vivo. Caso você caso queira editar informações do
-          comprador
+
+        {isEditing ? (
           <ConfigProvider
             theme={{
               components: {
+                Input: {
+                  hoverBorderColor: "#660099",
+                  activeBorderColor: "#660099",
+                  activeShadow: "none",
+                  colorBorder: "#bfbfbf",
+                  colorTextPlaceholder: "#666666",
+                },
                 Button: {
                   colorBorder: "#660099",
                   colorText: "#660099",
-                  colorPrimaryHover: "#cb1ef5",
-                  colorPrimaryBorderHover: "#cb1ef5",
-                  colorLink: "#660099",
-                  colorLinkHover: "#cb1ef5",
+                  colorPrimary: "#660099",
+                  colorPrimaryHover: "#883fa2",
                 },
               },
             }}
           >
-            <Button
-              onClick={() => setIsEditing(!isEditing)}
-              size="small"
-              type="link"
-              style={{
-                fontSize: "14px",
-                fontWeight: "bold",
-                textDecoration: "underline",
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleEditSubmit}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 text-[14px] w-full text-neutral-700">
+                <div className="flex gap-1">
+                  <p className="mb-2">
+                    <strong>Novo Email:</strong>
+                  </p>
+                  <Form.Item
+                    className="mb-0 text-[16px] w-50 font-light text-[#353535]"
+                    name="additional_email"
+                    rules={[
+                      {
+                        pattern:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Email inválido",
+                      },
+                    ]}
+                  >
+                    <Input
+                      maxLength={40}
+                      className="p-2 text-[16px] w-full font-light text-[#353535]"
+                      placeholder="Email"
+                    />
+                  </Form.Item>
+                </div>
+
+                <div className="flex gap-1 md:ml-2">
+                  <p className="mb-2">
+                    <strong>Novo Telefone:</strong>
+                  </p>
+                  <Form.Item
+                    className="mb-0 text-[16px] w-50  font-light text-[#353535]"
+                    name="additional_phone"
+                  >
+                    <PhoneInput format="(XX) XXXXX-XXXX" className="w-full" />
+                  </Form.Item>
+                </div>
+
+                <div className="flex gap-1">
+                  <p className="mb-2">
+                    <strong>Nome (Comprador):</strong>
+                  </p>
+                  <Form.Item
+                    className="mb-0 text-[16px] w-50 font-light text-[#353535]"
+                    name="full_name"
+                  >
+                    <Input
+                      maxLength={40}
+                      className="p-2 text-[16px] w-full font-light text-[#353535]"
+                      placeholder="Nome"
+                    />
+                  </Form.Item>
+                </div>
+
+                <div className="flex gap-1 md:ml-2">
+                  <p className="mb-2">
+                    <strong>Telefone (Comprador):</strong>
+                  </p>
+                  <Form.Item
+                    className="mb-0 text-[16px] w-50 font-light text-[#353535]"
+                    name="phone"
+                  >
+                    <PhoneInput format="(XX) XXXXX-XXXX" className="w-full" />
+                  </Form.Item>
+                </div>
+              </div>
+              <div className="flex flex-wrap w-full justify-end md:pr-24 gap-3">
+                <Button
+                  size="small"
+                  type="primary"
+                  variant="solid"
+                  style={{
+                    fontSize: "12px",
+                    height: "30px",
+                  }}
+                  htmlType="submit"
+                >
+                  Salvar alterações
+                </Button>
+                <Button
+                  size="small"
+                  type="default"
+                  style={{
+                    fontSize: "12px",
+                    height: "30px",
+                  }}
+                  onClick={handleCancelEdit}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </Form>
+          </ConfigProvider>
+        ) : (
+          <div className="flex flex-col gap-2 md:hidden text-[14px] w-full text-neutral-700">
+            <p className="flex gap-2 h-10">
+              <strong>Novo Email:</strong>
+              {purchase?.additional_email || "-"}
+            </p>
+            <p className="flex gap-2 h-10">
+              <strong>Novo Telefone:</strong>{" "}
+              {formatPhoneNumber(purchase?.additional_phone ?? "") ||
+                "-"}
+            </p>
+
+            <p className="flex gap-2 h-10">
+              <strong>Nome (Comprador):</strong>
+              {purchase?.full_name || "-"}
+              {equalName && (
+                <Tooltip
+                  title="Nome do comprador igual ao do gestor cadastrado na Vivo"
+                  placement="top"
+                  styles={{ body: { fontSize: "11px" } }}
+                >
+                  <span className="text-green-800 cursor-pointer">
+                    <CheckCircleOutlined />
+                  </span>
+                </Tooltip>
+              )}
+            </p>
+
+            <p className="flex gap-2 h-10">
+              <strong>Telefone (Comprador):</strong>{" "}
+              {formatPhoneNumber(purchase?.phone ?? "") ||
+                "-"}
+              {equalPhone && (
+                <Tooltip
+                  title="Telefone do comprador igual ao do gestor cadastrado na Vivo"
+                  placement="top"
+                  styles={{ body: { fontSize: "11px" } }}
+                >
+                  <span className="text-green-800 cursor-pointer">
+                    <CheckCircleOutlined />
+                  </span>
+                </Tooltip>
+              )}
+            </p>
+          </div>
+        )}
+
+
+        <div className=" flex flex-col gap-2 mt-2 text-[14px] w-full text-neutral-600">
+          <div className="cursor-poiter">
+            <ExclamationCircleOutlined /> Estes são os dados de contato
+            cadastrados na Vivo. Caso você caso queira editar informações do
+            comprador
+            <ConfigProvider
+              theme={{
+                components: {
+                  Button: {
+                    colorBorder: "#660099",
+                    colorText: "#660099",
+                    colorPrimaryHover: "#cb1ef5",
+                    colorPrimaryBorderHover: "#cb1ef5",
+                    colorLink: "#660099",
+                    colorLinkHover: "#cb1ef5",
+                  },
+                },
               }}
             >
-              clique aqui
-            </Button>
-          </ConfigProvider>
-          e atualize as suas informações.{" "}
+              <Button
+                onClick={() => setIsEditing(!isEditing)}
+                size="small"
+                type="link"
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  textDecoration: "underline",
+                }}
+              >
+                clique aqui
+              </Button>
+            </ConfigProvider>
+            e atualize as suas informações.{" "}
+          </div>
         </div>
         {showConfirmModal === true && (
           <ConfirmDataModal

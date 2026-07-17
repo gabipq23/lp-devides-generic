@@ -135,7 +135,13 @@ export default function SendInfoModalBase({
                                                 <Form.Item
                                                     name="cnpj"
                                                     className="flex-1 h-full w-full items-center"
-                                                    rules={[{ required: true, message: "Adicione um CNPJ" }]}
+                                                    rules={[
+                                                        { required: true, message: "Adicione um CNPJ" },
+                                                        {
+                                                            pattern: /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
+                                                            message: "CNPJ inválido",
+                                                        },
+                                                    ]}
                                                 >
                                                     <CNPJInput format="XX.XXX.XXX/XXXX-XX" />
                                                 </Form.Item>
@@ -161,7 +167,7 @@ export default function SendInfoModalBase({
                                                 <Form.Item
                                                     name="phone"
                                                     className="flex-1 h-full w-full items-center"
-                                                    rules={[{ required: true, message: "Adicione um telefone" }]}
+                                                    rules={[{ required: true, message: "Adicione um telefone" }, { pattern: /^\(\d{2}\) \d{5}-\d{4}$/, message: "Telefone inválido" }]}
                                                 >
                                                     <PhoneInput format="(XX) XXXXX-XXXX" />
                                                 </Form.Item>

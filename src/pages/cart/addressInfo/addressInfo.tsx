@@ -18,7 +18,7 @@ function AddressInfo({
   useEffect(() => {
     if (purchase) {
       form.setFieldsValue({
-        address_complement: purchase.address_complement,
+        address_complement: purchase.address_complement?.home_complement,
         address_note: purchase.address_note,
       });
     }
@@ -26,12 +26,15 @@ function AddressInfo({
 
   const OnSubmit = async () => {
     const values = await form.validateFields();
-
     const payload: Record<string, unknown> = {};
-
-    // if (values.address_complement !== purchase?.address_complement) {
-    //   payload.address_complement = values.address_complement;
-    // }
+    if (
+      values.address_complement !==
+      purchase?.address_complement?.home_complement
+    ) {
+      payload.address_complement = {
+        home_complement: values.address_complement,
+      };
+    }
     if (values.address_note !== purchase?.address_note) {
       payload.address_note = values.address_note;
     }
@@ -39,58 +42,34 @@ function AddressInfo({
     await updateData(payload);
     setIsEditing(false);
   };
-
+  const handleCancelEdit = () => {
+    form.setFieldsValue({
+      address_note: purchase?.address_note,
+      address_complement: purchase?.address_complement?.home_complement,
+    });
+    setIsEditing(false);
+  };
   const info = (
     <>
-      <div className="flex flex-col  w-full text-neutral-800  rounded-lg min-h-[120px] p-4">
-        {/* Endereço e Bairro  */}
-        <div className="hidden md:grid grid-cols-2 mb-2  gap-4 text-[14px] w-full text-neutral-700">
-          <p>
-            <strong>Endereço:</strong> {purchase?.address || "-"}
-          </p>
-          <p className="w-[400px] ">
-            <strong>Bairro:</strong>{" "}
-            {purchase?.district || "-"}
-          </p>
-        </div>
+      <div className="flex flex-col w-full text-neutral-800 rounded-lg min-h-[120px] p-4">
 
-        {/* Mobile: Endereço e Bairro */}
-        <div className="flex flex-col gap-2 mb-2 md:hidden text-[14px] w-full text-neutral-700">
-          <p>
-            <strong>Endereço:</strong> {purchase?.address || "-"}
-          </p>
-          <p>
-            <strong>Bairro:</strong>{" "}
-            {purchase?.district || "-"}
-          </p>
-        </div>
-
-        {/* Número e Cidade */}
-
-        <div className="hidden md:grid grid-cols-2 mb-2  gap-4 text-[14px] w-full text-neutral-700">
-          <p>
-            <strong>Número:</strong>{" "}
-            {purchase?.address_number || "-"}
-          </p>
-          <p className="w-[400px] ">
-            <strong>Cidade:</strong> {purchase?.city || "-"}
-          </p>
-        </div>
-
-        {/* Mobile: Número e Cidade */}
-        <div className="flex flex-col gap-2 mb-2 md:hidden text-[14px] w-full text-neutral-700">
-          <p>
-            <strong>Número:</strong>{" "}
-            {purchase?.address_number || "-"}
-          </p>
-          <p>
-            <strong>Cidade:</strong> {purchase?.city || "-"}
-          </p>
-        </div>
-
-        {/* UF e CEP */}
+        {/* Desktop */}
         <div className="hidden md:grid grid-cols-2 mb-2 gap-4 text-[14px] w-full text-neutral-700">
           <p>
+            <strong>Endereço:</strong> {purchase?.address || "-"}
+          </p>
+          <p className="w-[400px] ">
+            <strong>Bairro:</strong>{" "}
+            {purchase?.district || "-"}
+          </p>
+          <p>
+            <strong>Número:</strong>{" "}
+            {purchase?.address_number || "-"}
+          </p>
+          <p className="w-[400px] ">
+            <strong>Cidade:</strong> {purchase?.city || "-"}
+          </p>
+          <p>
             <strong>UF:</strong> {purchase?.state || "-"}
           </p>
           <p>
@@ -99,27 +78,58 @@ function AddressInfo({
               purchase?.zip_code ?? ""
             ) || "-"}
           </p>
-        </div>
-        {/* Mobile: UF e CEP */}
-        <div className="flex flex-col gap-2 mb-2 md:hidden text-[14px] w-full text-neutral-700">
-          <p>
-            <strong>UF:</strong> {purchase?.state || "-"}
-          </p>
-          <p>
-            <strong>CEP:</strong>{" "}
-            {formatCEP(
-              purchase?.zip_code ?? ""
-            ) || "-"}
-          </p>
-        </div>
-        {/* Complemento e Observações */}
-        {!isEditing ? (
-          <>
-            <div className="flex flex-col md:grid md:grid-cols-2 gap-4 text-[14px] w-full   text-neutral-700">
+          {!isEditing && (
+            <>
               {purchase?.address_complement !== null && (
                 <p>
                   <strong>Complemento:</strong>{" "}
-                  {purchase?.address_complement || "-"}
+                  {purchase?.address_complement?.home_complement || "-"}
+                </p>
+              )}
+              {purchase?.address_note !== null && (
+                <p>
+                  <strong>Observações:</strong>{" "}
+                  {purchase?.address_note || "-"}
+                </p>
+              )}</>
+          )}
+        </div>
+
+        {/* Mobile */}
+        <div className="flex flex-col gap-2 mb-2 md:hidden text-[14px] w-full text-neutral-700">
+          <p>
+            <strong>Endereço:</strong> {purchase?.address || "-"}
+          </p>
+          <p>
+            <strong>Bairro:</strong>{" "}
+            {purchase?.district || "-"}
+          </p>
+          <p>
+            <strong>Número:</strong>{" "}
+            {purchase?.address_number || "-"}
+          </p>
+          <p>
+            <strong>Cidade:</strong> {purchase?.city || "-"}
+          </p>
+          <p>
+            <strong>UF:</strong> {purchase?.state || "-"}
+          </p>
+          <p>
+            <strong>CEP:</strong>{" "}
+            {formatCEP(
+              purchase?.zip_code ?? ""
+            ) || "-"}
+          </p>
+        </div>
+
+        {/* Complemento e Observações */}
+        {!isEditing ? (
+          <>
+            <div className="flex flex-col gap-2 md:hidden text-[14px] w-full text-neutral-700">
+              {purchase?.address_complement !== null && (
+                <p>
+                  <strong>Complemento:</strong>{" "}
+                  {purchase?.address_complement?.home_complement || "-"}
                 </p>
               )}
               {purchase?.address_note !== null && (
@@ -146,9 +156,7 @@ function AddressInfo({
                     Button: {
                       colorBorder: "#660099",
                       colorText: "#660099",
-
                       colorPrimary: "#660099",
-
                       colorPrimaryHover: "#883fa2",
                     },
                   },
@@ -157,73 +165,68 @@ function AddressInfo({
                 <Form
                   form={form}
                   layout="vertical"
-                  className="md:grid grid-cols-2 gap-4"
                   onFinish={OnSubmit}
                 >
-                  <div className="flex gap-4 h-22  text-[14px] w-full text-neutral-700">
-                    <p>
-                      <strong>Complemento:</strong>
-                    </p>
-                    <div className="flex-1  min-w-[140px]  max-w-[300px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 text-[14px] w-full text-neutral-700">
+                    <div className="flex gap-1 mr-4">
+                      <p className="mb-2">
+                        <strong>Complemento:</strong>
+                      </p>
                       <Form.Item
-                        className="w-full text-[16px] font-light text-[#353535]"
+                        className="w-full max-w-100"
                         name="address_complement"
                       >
                         <Input.TextArea
                           maxLength={58}
-                          autoSize={{ minRows: 3, maxRows: 3 }}
-                          value={purchase?.address_complement}
+                          autoSize={{ minRows: 2, maxRows: 2 }}
+                          value={purchase?.address_complement?.home_complement}
                           className="p-2 text-[16px] w-full font-light text-[#353535]"
                           placeholder="Complemento de endereço"
                         />
                       </Form.Item>
-                    </div>
-                    <div className="mt-0.5">
-                      <Button
-                        size="small"
-                        type="primary"
-                        variant="solid"
-                        style={{
-                          fontSize: "12px",
-                          height: "30px",
-                        }}
-                        htmlType="submit"
-                      >
-                        Salvar
-                      </Button>
-                    </div>
-                  </div>
 
-                  <div className="flex h-16   gap-4 text-[14px] w-full text-neutral-700">
-                    <p>
-                      <strong>Observações: </strong>
-                    </p>
-                    <div className="flex-1 min-w-[140px]  max-w-[600px]">
-                      {" "}
-                      <Form.Item className="w-full" name="address_note">
+                    </div>
+
+                    <div className="flex gap-1 mr-4 ">
+                      <p>
+                        <strong>Observações: </strong>
+                      </p>
+                      <Form.Item className="w-full max-w-100" name="address_note">
                         <Input.TextArea
-                          autoSize={{ minRows: 3, maxRows: 4 }}
+                          autoSize={{ minRows: 2, maxRows: 2 }}
                           value={purchase?.address_note}
                           className="p-2 text-[16px] font-light text-[#353535] w-full"
                           placeholder="Observações ou ponto de referência"
                         />
                       </Form.Item>
                     </div>
-                    <div className="mt-0.5">
-                      <Button
-                        size="small"
-                        type="primary"
-                        variant="solid"
-                        style={{
-                          fontSize: "12px",
-                          height: "30px",
-                        }}
-                        htmlType="submit"
-                      >
-                        Salvar
-                      </Button>
-                    </div>
                   </div>
+                  <div className="flex flex-wrap w-full justify-end md:pr-24 gap-3">
+                    <Button
+                      size="small"
+                      type="primary"
+                      variant="solid"
+                      style={{
+                        fontSize: "12px",
+                        height: "30px",
+                      }}
+                      htmlType="submit"
+                    >
+                      Salvar alterações
+                    </Button>
+                    <Button
+                      size="small"
+                      type="default"
+                      style={{
+                        fontSize: "12px",
+                        height: "30px",
+                      }}
+                      onClick={handleCancelEdit}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+
                 </Form>
               </ConfigProvider>
             )}

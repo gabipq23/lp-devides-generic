@@ -123,8 +123,7 @@ export const generatePDF = async (purchase: IOrder | undefined) => {
                   item.installment_amount !== undefined &&
                     item.installment_amount !== null
                     ? `${(
-                      Number(item.installment_amount) /
-                      Number(purchase?.price_summary?.number_of_installments || 1)
+                      Number(item.installment_amount)
                     ).toLocaleString("pt-BR", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -191,7 +190,7 @@ export const generatePDF = async (purchase: IOrder | undefined) => {
           `Cidade: ${purchase?.city || "-"}`,
           `UF: ${purchase?.state || "-"}`,
           `CEP: ${purchase?.zip_code || "-"}`,
-          `Complemento: ${purchase?.address_complement || "-"}`,
+          `Complemento: ${purchase?.address_complement?.home_complement || "-"}`,
           `Observações: ${purchase?.address_note || "-"}`,
         ],
         style: "content",

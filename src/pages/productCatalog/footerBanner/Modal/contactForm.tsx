@@ -14,7 +14,7 @@ import { PatternFormat, PatternFormatProps } from "react-number-format";
 const PhoneInput = (props: PatternFormatProps) => (
   <PatternFormat
     {...props}
-    format="## (##) #####-####"
+    format="(##) #####-####"
     customInput={Input}
     size="middle"
   />

@@ -29,7 +29,7 @@ type BuyerInfoFormValues = {
 const PhoneInput = (props: PatternFormatProps) => (
   <PatternFormat
     {...props}
-    format="## (##) #####-####"
+    format="(##) #####-####"
     customInput={Input}
     placeholder="Telefone"
     size="middle"

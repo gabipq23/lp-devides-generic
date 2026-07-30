@@ -76,20 +76,22 @@ export const ItensListSmallScreen = ({
         );
         const qtdForProduct =
           selectedProductQtd?.quantity ?? product.quantity ?? 1;
-
+        const normalizeAvailableColors = (colors: string[] | undefined) =>
+          (colors ?? []).flatMap((color) =>
+            color
+              .split(",")
+              .map((value) => value.trim())
+              .filter(Boolean),
+          );
         const selectedProductColor =
           selectedColor?.find((p: any) => p.id === product.item_id)
             ?.color ??
           (Array.isArray(product.available_colors) && product.selected_color);
 
         // Cria as opções de cores a partir do array de cores do produto
-        const colorsOptions = Array.isArray(product.available_colors)
-          ? product.available_colors
-            .filter(
-              (cor: string) => typeof cor === "string" && cor.trim() !== ""
-            )
-            .map((cor: string) => ({ label: cor, value: cor }))
-          : [];
+        const colorsOptions = normalizeAvailableColors(product.available_colors).map(
+          (cor: string) => ({ label: cor, value: cor })
+        );
         return (
           <div
             key={product.item_id}

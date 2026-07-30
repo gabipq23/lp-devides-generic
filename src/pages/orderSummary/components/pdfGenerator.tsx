@@ -84,11 +84,8 @@ export const generatePDF = async (purchase: IOrder | undefined) => {
       // Título do pedido
       {
         stack: [
-          { text: `Orçamento Nº ${purchase?.order_id}`, style: "title" },
-          {
-            text: `Segmento: ${runtime.typeConfig.label}`,
-            style: "subtitle",
-          },
+          { text: `Orçamento Nº ${purchase?.id}`, style: "title" },
+
         ],
         margin: [0, 0, 0, 2],
       },

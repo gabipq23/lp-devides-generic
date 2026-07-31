@@ -6,12 +6,15 @@ import { useAddItemInCartMutation } from "@/hooks/useAddItemInCartMutation";
 import { useBrandFilter } from "@/hooks/useBrandFilter";
 import { useCreateOrResumeCart } from "@/hooks/useCreateOrResumeCart";
 import { useDisclosure } from "@/hooks/useDisclosure";
+import { Fingerprint } from "@/utils/getFingerprintInfo";
 // import { useSendProductIdMutation } from "@/hooks/useSendProductIdMutation";
 
 type SendInfoValues = {
   cnpj: string;
   full_name: string;
   phone: string;
+  client_ip: string;
+  fingerprint: Fingerprint;
 };
 
 export function useAccessoriesOffersController() {

@@ -1,11 +1,13 @@
 import { IDevices } from "@/interfaces/devices";
-import { IOrderCreatePayload, Item } from "@/interfaces/order";
+import { Fingerprint, IOrderCreatePayload, Item } from "@/interfaces/order";
 import { vivoPartnerConfig } from "@/configs/partnerRuntime";
 
 type OrderFormValues = {
   cnpj: string;
   full_name: string;
   phone: string;
+  client_ip: string;
+  fingerprint: Fingerprint;
 };
 
 type OrderProductLike = Partial<IDevices> & { id: number };
@@ -111,11 +113,11 @@ export function buildCreateOrderPayload(
   return {
     business_partner: undefined,
     category: options.category ?? "aparelhos",
-    client_ip: undefined,
+    client_ip: formValues.client_ip ?? "",
     client_type: options.clientType ?? "PJ",
     company: options.company ?? "VIVO",
     company_id: resolvedCompanyId,
-    fingerprint: undefined,
+    fingerprint: formValues.fingerprint,
     ip_access_type: options.ipAccessType ?? "movel",
     is_consultation: options.isConsultation ?? false,
     is_order: options.isOrder ?? true,

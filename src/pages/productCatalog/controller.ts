@@ -1,9 +1,12 @@
 import { useCreateOrResumeCart } from "@/hooks/useCreateOrResumeCart";
+import { Fingerprint } from "@/utils/getFingerprintInfo";
 
 type SendInfoValues = {
   cnpj: string;
   full_name: string;
   phone: string;
+  client_ip: string;
+  fingerprint: Fingerprint;
 };
 
 export function useAppController() {

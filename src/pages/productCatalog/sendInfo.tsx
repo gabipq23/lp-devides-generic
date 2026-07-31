@@ -1,4 +1,5 @@
 import SendInfoModalBase from "@/components/SendInfoModal";
+import { Fingerprint } from "@/utils/getFingerprintInfo";
 
 // Modal que da inicio a compra
 function SendInfoModal({
@@ -12,6 +13,8 @@ function SendInfoModal({
     cnpj: string;
     full_name: string;
     phone: string;
+    client_ip: string;
+    fingerprint: Fingerprint;
   }) => Promise<boolean> | boolean;
 }) {
   const closeModal = () => setShowModal(false);

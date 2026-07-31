@@ -67,7 +67,6 @@ export class PurchaseService {
     await api.post(`/telecom/orders/${id}/cart/items`, data);
   }
 
-  // precisa testar
   async removeInsuranceFromProduct(id: number, itemId: number) {
     await api.delete(`/telecom/orders/${id}/cart/items/${itemId}/insurance`);
   }

@@ -443,36 +443,6 @@ export const generatePDF = async (purchase: IOrder | undefined) => {
         ],
       },
       { text: "", margin: [0, 2, 0, 0] },
-      // [
-      //   {
-      //     canvas: [
-      //       {
-      //         type: "line",
-      //         x1: 0,
-      //         y1: 0,
-      //         x2: 555,
-      //         y2: 0,
-      //         lineWidth: 0.5,
-      //         lineColor: "#e5e5e5",
-      //       },
-      //     ],
-      //     margin: [0, 4, 0, 4],
-      //   },
-      // ],
-      // { text: "", margin: [0, 2, 0, 0] },
-      // {
-      //   columns: [
-      //     { text: "Valor total do pedido", style: "content" },
-      //     {
-      //       text: `R$ ${Number(purchase?.total).toLocaleString("pt-BR", {
-      //         minimumFractionDigits: 2,
-      //         maximumFractionDigits: 2,
-      //       })}`,
-      //       style: "content",
-      //       alignment: "right" as const,
-      //     },
-      //   ],
-      // },
 
       // Rodapé
       {

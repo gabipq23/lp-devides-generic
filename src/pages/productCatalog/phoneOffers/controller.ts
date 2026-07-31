@@ -6,6 +6,7 @@ import { useAddItemInCartMutation } from "@/hooks/useAddItemInCartMutation";
 import { useBrandFilter } from "@/hooks/useBrandFilter";
 import { useCreateOrResumeCart } from "@/hooks/useCreateOrResumeCart";
 import { useDisclosure } from "@/hooks/useDisclosure";
+import { Fingerprint } from "@/utils/getFingerprintInfo";
 // import { useSendProductIdMutation } from "@/hooks/useSendProductIdMutation";
 
 export function usePhoneOffersController() {
@@ -68,7 +69,13 @@ export function usePhoneOffersController() {
     setSelectedProductDetail(newSelectedProductDetail);
   };
   const updateData = async (
-    formValues: { cnpj: string; full_name: string; phone: string },
+    formValues: {
+      cnpj: string;
+      full_name: string;
+      phone: string;
+      client_ip: string;
+      fingerprint: Fingerprint;
+    },
     productDetail: IDevices | null,
   ) => {
     const result = await createOrResumeCart({

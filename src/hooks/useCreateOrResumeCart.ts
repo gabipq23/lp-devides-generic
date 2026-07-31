@@ -17,11 +17,14 @@ import {
   persistOrderTokenByOrderId,
   persistOrderTokenFromCreateResponse,
 } from "@/utils/orderResponse";
+import { Fingerprint } from "@/utils/getFingerprintInfo";
 
 type SendInfoValues = {
   cnpj: string;
   full_name: string;
   phone: string;
+  client_ip: string;
+  fingerprint: Fingerprint;
 };
 
 type ProductLike = (Partial<IDevices> & { id: number }) | null;

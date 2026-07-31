@@ -1,6 +1,7 @@
 import { Button, ConfigProvider, Form, Input, Modal } from "antd";
 import { PatternFormat, PatternFormatProps } from "react-number-format";
 import { IDevices } from "@/interfaces/devices";
+import { Fingerprint, getFingerprint } from "@/utils/getFingerprintInfo";
 
 const PhoneInput = (props: PatternFormatProps) => (
     <PatternFormat
@@ -26,6 +27,8 @@ type SendInfoFormValues = {
     cnpj: string;
     full_name: string;
     phone: string;
+    client_ip: string;
+    fingerprint: Fingerprint;
 };
 
 type Props = {
@@ -74,6 +77,12 @@ export default function SendInfoModalBase({
 
     const width = modalWidth ?? (showProductCard ? 780 : 500);
 
+    const getClientIp = async (): Promise<string> => {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip;
+    };
+
     return (
         <Modal
             centered
@@ -119,10 +128,14 @@ export default function SendInfoModalBase({
                                     layout="vertical"
                                     className="text-[#666666] gap-2 p-2"
                                     onFinish={async (values: SendInfoFormValues) => {
+                                        const clientIp = await getClientIp();
+                                        const fingerprint = getFingerprint();
                                         const payload = {
                                             ...values,
                                             phone: values.phone.replace(/\D/g, ""),
                                             cnpj: values.cnpj.replace(/\D/g, ""),
+                                            client_ip: clientIp,
+                                            fingerprint: fingerprint,
                                         };
 
                                         const success = await onSubmit(payload, productDetail);

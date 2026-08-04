@@ -15,6 +15,8 @@ function SendInfoModal({
     phone: string;
     client_ip: string;
     fingerprint: Fingerprint;
+    url: string;
+    lp_url: string;
   }) => Promise<boolean> | boolean;
 }) {
   const closeModal = () => setShowModal(false);

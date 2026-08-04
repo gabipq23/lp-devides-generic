@@ -8,6 +8,8 @@ type OrderFormValues = {
   phone: string;
   client_ip: string;
   fingerprint: Fingerprint;
+  url: string;
+  lp_url: string;
 };
 
 type OrderProductLike = Partial<IDevices> & { id: number };
@@ -122,11 +124,11 @@ export function buildCreateOrderPayload(
     is_consultation: options.isConsultation ?? false,
     is_order: options.isOrder ?? true,
     landing_page: options.landingPage ?? "aparelhos",
-    lp_url: undefined,
+    lp_url: formValues.lp_url,
     order_id: undefined,
     order_number: undefined,
     partner_id: resolvedPartnerId,
-    url: undefined,
+    url: formValues.url,
     cnpj: formValues.cnpj,
     additional_email: undefined,
     additional_operator: undefined,

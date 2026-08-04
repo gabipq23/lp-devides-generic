@@ -29,6 +29,8 @@ type SendInfoFormValues = {
     phone: string;
     client_ip: string;
     fingerprint: Fingerprint;
+    url: string;
+    lp_url: string;
 };
 
 type Props = {
@@ -82,7 +84,10 @@ export default function SendInfoModalBase({
         const data = await response.json();
         return data.ip;
     };
+    const lp_url = window.location.href;
+    const urlObj = new URL(lp_url);
 
+    const lpUrl = urlObj.origin + urlObj.pathname;
     return (
         <Modal
             centered
@@ -136,6 +141,8 @@ export default function SendInfoModalBase({
                                             cnpj: values.cnpj.replace(/\D/g, ""),
                                             client_ip: clientIp,
                                             fingerprint: fingerprint,
+                                            lp_url: lp_url,
+                                            url: lpUrl,
                                         };
 
                                         const success = await onSubmit(payload, productDetail);

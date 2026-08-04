@@ -75,6 +75,8 @@ export function usePhoneOffersController() {
       phone: string;
       client_ip: string;
       fingerprint: Fingerprint;
+      url: string;
+      lp_url: string;
     },
     productDetail: IDevices | null,
   ) => {

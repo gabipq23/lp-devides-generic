@@ -25,6 +25,8 @@ type SendInfoValues = {
   phone: string;
   client_ip: string;
   fingerprint: Fingerprint;
+  url: string;
+  lp_url: string;
 };
 
 type ProductLike = (Partial<IDevices> & { id: number }) | null;

@@ -59,6 +59,9 @@ export const Contact: React.FC<ContactProps> = ({
     closeModal();
   };
   const lp_url = window.location.href;
+  const urlObj = new URL(lp_url);
+
+  const lpUrl = urlObj.origin + urlObj.pathname;
   const product_type = window.location.pathname.split("/")[1] || type;
   return (
     <ConfigProvider
@@ -103,7 +106,8 @@ export const Contact: React.FC<ContactProps> = ({
             business_partner: partner?.partner_name || "",
             partner_id: Number(partner?.partner_id ?? 9),
             category: product_type,
-            url_lp: lp_url,
+            lp_url: lp_url,
+            url: lpUrl,
 
           });
         }}

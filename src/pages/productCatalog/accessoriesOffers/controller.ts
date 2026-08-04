@@ -15,6 +15,8 @@ type SendInfoValues = {
   phone: string;
   client_ip: string;
   fingerprint: Fingerprint;
+  url: string;
+  lp_url: string;
 };
 
 export function useAccessoriesOffersController() {

@@ -28,7 +28,6 @@ function Summary({
     null | "receita" | "quantity" | "credito"
   >(null);
   const purchase = purchaseById?.order;
-  console.log(purchaseById)
   const resolvedPurchaseId =
     purchase?.id ??
     (purchaseById as any)?.id ??
@@ -53,7 +52,7 @@ function Summary({
   const isRFBStatusActive =
     purchase?.company_rfb_information?.situacao_cadastral === "ATIVA";
   const quantityOfItemsAllowedToBuy =
-    purchase?.client_credit?.eligible_line.reduce(
+    purchase?.client_credit?.telefones.reduce(
       (total: number, phone: any) => {
         return total + (phone.eligible ? 1 : 0);
       },

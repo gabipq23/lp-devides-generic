@@ -13,9 +13,4 @@ export class ProductsService {
   async addProductInChart(id: string, data: any) {
     await api.post(`/telecom/orders/${id}/cart/items`, data);
   }
-
-  // // PENDENTE
-  // async sendProductId(id: number) {
-  //   await api.post(`/pedidos/selecionar-produto/${id}`);
-  // }
 }

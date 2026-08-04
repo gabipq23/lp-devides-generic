@@ -71,7 +71,6 @@ export class PurchaseService {
     await api.delete(`/telecom/orders/${id}/cart/items/${itemId}/insurance`);
   }
 
-  // ja esta com a rota porem falta acertar lógica
   async updatePurchase(
     orderId: string | number,
     data: Record<string, unknown>,
@@ -125,7 +124,8 @@ export class PurchaseService {
   //falta criar no back
 
   async getClientCreditByCnpj(cnpj: string): Promise<ICredit> {
-    const res = await api.get(`/creditos/${cnpj}`);
+    const res = await api.get(`/telecom/vivo/device-clients/cnpj/${cnpj}`);
     return res.data;
   }
 }
+// 00000254000100

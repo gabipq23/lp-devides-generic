@@ -144,15 +144,19 @@ export interface Item {
 }
 
 export interface ClientCredit {
+  qt_movel: number;
   available_credit: number;
+  available_credit_serv: number;
   available_equipment_credit: number | null;
-  eligible_line: EligibleLine[];
+  telefones: EligibleLine[];
 }
 
 export interface EligibleLine {
-  vivo_m_classification: number;
+  m_classification: number;
   eligible: boolean;
   phone: string;
+  brand: string;
+  device: string;
 }
 
 export interface PriceSummary {

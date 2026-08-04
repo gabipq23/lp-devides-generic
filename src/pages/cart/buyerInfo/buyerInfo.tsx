@@ -175,7 +175,7 @@ function BuyerInfo({
                   {purchase?.full_name || "-"}
                 </p>
               )}
-              {purchase?.additional_phone !== null && (
+              {purchase?.phone !== null && (
                 <p>
                   <strong>Telefone (Comprador):</strong>{" "}
                   {formatPhoneNumber(purchase?.phone ?? "") ||

@@ -31,6 +31,7 @@ export default function PhoneHighlights() {
     } = usePhoneHighlightsController();
 
     const [loadingProductId, setLoadingProductId] = useState<number | null>(null);
+    const [entrySeed] = useState<number>(() => Date.now());
 
     const isProductVivoBoxIMG = "assets/VivoBox.png";
     const isProductRoteadorAskeyIMG = "assets/RoteadorAskey.jpeg";
@@ -47,25 +48,49 @@ export default function PhoneHighlights() {
 
     const productVersion = useMemo(() => {
         if (!productFiltered) return [];
-        const shuffle = (arr: IDevices[]) => arr.slice().sort(() => Math.random() - 0.5);
-        const isOnlineProduct = (product: IDevices) => product.online;
-        const allOnline = productFiltered.filter(isOnlineProduct);
 
         let filtered: IDevices[] = [];
         if (!version || version === "0") {
-            filtered = allOnline;
+            filtered = productFiltered.filter((p) => p.online);
         } else if (version === "1") {
-            filtered = allOnline.filter((p) => Number(p.price_10x) * 10 <= 1300);
+            filtered = productFiltered.filter(
+                (p) => Number(p.price_10x) * 10 <= 1300 && p.online
+            );
         } else if (version === "2") {
-            filtered = allOnline.filter((p) => Number(p.price_10x) * 10 > 1300 && Number(p.price_10x) * 10 <= 6000);
+            filtered = productFiltered.filter(
+                (p) =>
+                    Number(p.price_10x) * 10 > 1300 &&
+                    Number(p.price_10x) * 10 <= 6000 &&
+                    p.online
+            );
         } else if (version === "3") {
-            filtered = allOnline.filter((p) => Number(p.price_10x) * 10 > 6000);
-        } else {
-            filtered = allOnline;
+            filtered = productFiltered.filter(
+                (p) => Number(p.price_10x) * 10 > 6000 && p.online
+            );
         }
 
-        return shuffle(filtered).slice(0, 8);
-    }, [productFiltered, version]);
+        const seededShuffle = (arr: IDevices[], seed: number): IDevices[] => {
+            const result = [...arr];
+            let t = seed >>> 0;
+
+            const nextRandom = () => {
+                t += 0x6d2b79f5;
+                let r = Math.imul(t ^ (t >>> 15), 1 | t);
+                r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+                return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+            };
+
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(nextRandom() * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+
+            return result;
+        };
+
+        const versionSeed = Number(version ?? 0) || 0;
+        return seededShuffle(filtered, entrySeed + versionSeed).slice(0, 8);
+    }, [productFiltered, version, entrySeed]);
 
     const getTooltipMessage = (product: IDevices) => {
         const { insurance_theft, insurance_theft_damages } = product;

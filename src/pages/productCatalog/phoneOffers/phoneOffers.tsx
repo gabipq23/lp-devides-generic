@@ -166,7 +166,7 @@ function PhoneOffers() {
                 return (
                   product.online && (
                     <div
-                      key={index}
+                      key={product.id ?? product.sap_code}
                       className={`flex items-center ${isAddItemInChartLoading ? "pointer-events-none" : ""
                         } relative justify-start flex-wrap gap-7 p-3 pb-4 pt-4 bg-white rounded-[4px] border-1 border-neutral-200 shadow-sm`}
                     >

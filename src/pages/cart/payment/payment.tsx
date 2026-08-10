@@ -13,6 +13,7 @@ function Payment({
   isPaymentUpdateLoading?: boolean;
   isAllDataLoading?: boolean;
 }) {
+
   const renderPaymentFields = () => {
     if (formaPagamento === "cartao credito") {
       return (
@@ -46,7 +47,7 @@ function Payment({
           />
           <div className="flex items-center gap-1 text-neutral-500">
             {" "}
-            <ExclamationCircleOutlined /> {renderPaymentFields()}
+            <ExclamationCircleOutlined /> {renderPaymentFields() ?? "O parcelamento da compra será cobrado em sua fatura Vivo"}
           </div>
         </div>
         {isPaymentUpdateLoading && (

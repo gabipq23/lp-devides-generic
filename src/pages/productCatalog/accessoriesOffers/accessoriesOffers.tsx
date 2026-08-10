@@ -168,7 +168,7 @@ function AccessoriesOffers() {
                 return (
                   product.online && (
                     <div
-                      key={index}
+                      key={product.id ?? product.sap_code}
                       className={`flex items-center ${isAddItemInChartLoading ? "pointer-events-none" : ""
                         } relative 0 max-w-[280px] min-w-[100px] justify-start flex-wrap gap-4 p-3 bg-white rounded-[4px] border-1 border-neutral-200 shadow-sm`}
                     >

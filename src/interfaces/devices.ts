@@ -35,38 +35,61 @@ export interface IDevices {
   company: string;
   company_id: number;
   landing_page: string;
+
+  cod_sku: string | null;
+  part_number: string | null;
+  offer_type: string | null;
+  specifications: string | null;
+  price_36x: number | null;
+  price_48x: number | null;
 }
 
+// Ficha técnica: category:aparelhos usa a estrutura detalhada (nested); category:equipamentos usa "tabela" plana + campos soltos abaixo. Todos os campos são opcionais pois variam por categoria/produto.
 interface FichaTecnica {
-  tabela: {
-    [categoria: string]: {
-      [caracteristica: string]: string;
-    };
+  tabela?: {
+    [categoria: string]:
+      | string
+      | {
+          [caracteristica: string]: string;
+        };
   };
-  Bateria: {
+
+  // campos planos usados em category:equipamentos
+  screen?: string;
+  weight?: string;
+  storage?: string;
+  bluetooth?: string;
+  processor?: string;
+  ram_memory?: string;
+  operating_system?: string;
+  other_highlights?: string;
+  connectivity_wifi?: string;
+
+  // campos detalhados usados em category:aparelhos
+  Bateria?: {
     Tipo: string;
     "Com bateria removível": string;
     "Com carregamento rápido": string;
     "Com carregamento sem fio": string;
   };
-  CaracterísticasGerais: {
+  CaracterísticasGerais?: {
     Cor: string[];
     Linha: string;
     Marca: string;
     Modelo: string;
     Versões: string;
   };
-  CartaoSIM: {
+  CartaoSIM?: {
     "Com eSIM": string;
     "É Dual SIM": string;
     "Quantidade de eSIMs": string;
     "Quantidade de ranhuras para cartão SIM": string;
     "Tamanhos de cartão SIM compatíveis": string;
   };
-  Conectividade: {
+  Conectividade?: {
     [key: string]: string;
   };
-  Camera: {
+  Camera?: {
     "Com câmera": string;
     "Zoom digital": string;
     "Zoom óptico": string;
@@ -82,56 +105,56 @@ interface FichaTecnica {
     "Abertura do diafragma da câmera traseira": string;
     "Características principais das câmeras": string;
   };
-  DesignEResistencia: {
+  DesignEResistencia?: {
     "Classificação IP": string;
     "É resistente ao pó": string;
     "É resistente à água": string;
     "É resistente a salpicos": string;
     "Com teclado QWERTY físico": string;
   };
-  Especificacoes: {
+  Especificacoes?: {
     "Ano de lançamento": string;
     "Mês de lançamento": string;
     "Número de homologação da Anatel": string;
   };
-  Imagens: string[];
-  Memoria: {
+  Imagens?: string[];
+  Memoria?: {
     "Memória RAM": string;
     "Memória interna": string;
     "Com ranhura para cartão de memória": string;
   };
-  Outros: {
+  Outros?: {
     Fabricante: string;
     "Inclui lápis": string;
     "Resolução da câmera grande-angular": string;
   };
-  PesoEDimensoes: {
+  PesoEDimensoes?: {
     Peso: string;
     "Altura x Largura x Profundidade": string;
   };
-  Processador: {
+  Processador?: {
     "Modelo de GPU": string;
     "Modelo do processador": string;
     "Quantidade de núcleos do processador": string;
   };
-  Seguridade: {
+  Seguridade?: {
     "Com botão SOS": string;
     "Com reconhecimento facial": string;
     "Com leitor de impressão digital": string;
   };
-  Sensores: {
+  Sensores?: {
     "Com acelerômetro": string;
     "Com barômetro": string;
     "Com bússola": string;
     "Com giroscópio": string;
     "Com sensor de proximidade": string;
   };
-  SistemaOperacional: {
+  SistemaOperacional?: {
     "Nome do sistema operacional": string;
     "Versão original do sistema operacional": string;
     "Última versão compatível do sistema operacional": string;
   };
-  Tela: {
+  Tela?: {
     "Tipo de tela": string;
     "Com tela tátil": string;
     "Tamanho da tela": string;

@@ -8,10 +8,54 @@ export default function InsuranceDiv({
   const technicalTable =
     productDetail?.technical_sheet?.tabela ?? {};
 
+  // ficha técnica de equipamentos é plana (screen, weight, processor, etc.), diferente da estrutura aninhada de aparelhos
+  const equipmentSpecs = (
+    [
+      ["Tela", productDetail?.technical_sheet?.screen],
+      ["Processador", productDetail?.technical_sheet?.processor],
+      ["Memória RAM", productDetail?.technical_sheet?.ram_memory],
+      ["Armazenamento", productDetail?.technical_sheet?.storage],
+      ["Wi-Fi", productDetail?.technical_sheet?.connectivity_wifi],
+      ["Bluetooth", productDetail?.technical_sheet?.bluetooth],
+      ["Sistema Operacional", productDetail?.technical_sheet?.operating_system],
+      ["Peso", productDetail?.technical_sheet?.weight],
+      ["Outros destaques", productDetail?.technical_sheet?.other_highlights],
+    ] as Array<[string, string | undefined]>
+  ).filter(([, value]) => Boolean(value));
+
   const productCode = productDetail?.sap_code ?? "-";
   const productModel = productDetail?.model ?? "-";
-  const price10x = productDetail?.price_10x ?? "-"
-  const price24x = productDetail?.price_24x ?? "-"
+  const installmentOptions = [
+    {
+      label: "À vista",
+      price: productDetail?.price,
+    },
+    {
+      label: "10x",
+      price: productDetail?.price_10x,
+    },
+    {
+      label: "12x",
+      price: productDetail?.price_12x,
+    },
+    {
+      label: "24x",
+      price: productDetail?.price_24x,
+    },
+    {
+      label: "36x",
+      price: productDetail?.price_36x,
+    },
+    {
+      label: "48x",
+      price: productDetail?.price_48x,
+    },
+  ].filter(
+    (option) =>
+      typeof option.price === "number" &&
+      option.price > 0
+  );
+
 
   return (
     <>
@@ -64,26 +108,41 @@ export default function InsuranceDiv({
             </span>
           </div>
 
-          <div className="flex 2-full border-1 border-[#eeeeee]">
-            <span className="bg-[#eeeeee] text-[14px]  p-2  w-2/5">
-              Valor da parcela em 10x
-            </span>
-            <span className=" p-2 w-3/5 text-[16px]  font-light text-[#353535]">
-              {typeof price10x === "number"
-                ? `R$ ${price10x.toFixed(2).replace(".", ",")}`
-                : "-"}
-            </span>
-          </div>
-          <div className="flex 2-full border-1 border-[#eeeeee]">
-            <span className="bg-[#eeeeee] text-[14px]  p-2 w-2/5">
-              Valor da parcela em 24x
-            </span>
-            <span className=" p-2 w-3/5 text-[16px]  font-light text-[#353535]">
-              {typeof price24x === "number"
-                ? `R$ ${price24x.toFixed(2).replace(".", ",")}`
-                : "-"}
-            </span>
-          </div>
+          {installmentOptions.map(({ label, price }) => (
+            <div
+              key={label}
+              className="flex 2-full border-1 border-[#eeeeee]"
+            >
+              <span className="bg-[#eeeeee] text-[14px] p-2 w-2/5">
+                {label === "À vista"
+                  ? "Valor à vista"
+                  : `Valor da parcela em ${label}`}
+              </span>
+
+              <span className="p-2 w-3/5 text-[16px] font-light text-[#353535]">
+                R$ {price.toFixed(2).replace(".", ",")}
+              </span>
+            </div>
+          ))}
+
+
+          {equipmentSpecs.length > 0 && (
+            <div className="flex flex-col 2-full gap-1">
+              <div className="flex pl-2 py-2 bg-[#eeeeee]">
+                <h3 className=" text-[14px] ">Especificações técnicas</h3>
+              </div>
+              {equipmentSpecs.map(([fieldKey, fieldValue]) => (
+                <div key={fieldKey} className="flex 2-full border-1 border-[#eeeeee]">
+                  <div className="bg-[#eeeeee] text-[14px]  p-2 w-2/5">
+                    {fieldKey}
+                  </div>
+                  <div className=" p-2 w-3/5 text-[16px]  font-light text-[#353535]">
+                    {fieldValue}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {Object.entries(technicalTable).map(
             ([sectionKey, sectionValue]) => {

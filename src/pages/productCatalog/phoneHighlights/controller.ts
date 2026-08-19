@@ -7,6 +7,7 @@ import { useBrandFilter } from "@/hooks/useBrandFilter";
 import { useCreateOrResumeCart } from "@/hooks/useCreateOrResumeCart";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { Fingerprint } from "@/utils/getFingerprintInfo";
+import { usePartner } from "@/context/PartnerContext";
 // import { useSendProductIdMutation } from "@/hooks/useSendProductIdMutation";
 
 export function usePhoneHighlightsController() {
@@ -18,12 +19,13 @@ export function usePhoneHighlightsController() {
   const id = sessionStorage.getItem("carrinhoId");
   const queryClient = useQueryClient();
   const productsService = new ProductsService();
+  const { type } = usePartner();
 
   const productsQuery = useQuery<IDevicesResponse>({
     refetchOnWindowFocus: false,
-    queryKey: ["products"],
+    queryKey: ["products", type],
     queryFn: async (): Promise<IDevicesResponse> => {
-      const response = await productsService.allProducts();
+      const response = await productsService.allProducts(type);
       return response;
     },
   });

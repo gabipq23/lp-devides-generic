@@ -86,6 +86,40 @@ export default function SendInfoModalBase({
     };
     const lp_url = window.location.href;
     const urlObj = new URL(lp_url);
+    const isEquipment = productDetail?.category === "equipamentos";
+
+    const equipmentPayment = [
+        {
+            installments: 48,
+            value: productDetail?.price_48x,
+            label: "48x de",
+        },
+        {
+            installments: 36,
+            value: productDetail?.price_36x,
+            label: "36x de",
+        },
+        {
+            installments: 24,
+            value: productDetail?.price_24x,
+            label: "24x de",
+        },
+        {
+            installments: 12,
+            value: productDetail?.price_12x,
+            label: "12x de",
+        },
+        {
+            installments: 1,
+            value: productDetail?.price,
+            label: "À vista de",
+        },
+    ].find(
+        (option) =>
+            typeof option.value === "number" &&
+            option.value > 0
+    );
+
 
     const lpUrl = urlObj.origin + urlObj.pathname;
     return (
@@ -225,16 +259,45 @@ export default function SendInfoModalBase({
                                         <p style={{ fontWeight: "bold", paddingBottom: "4px" }} className="text-[14px] text-neutral-700">
                                             {productDetail?.model}
                                         </p>
-                                        <p style={{ fontWeight: "bold" }} className="text-[14px] text-neutral-700">
+
+                                        <p
+                                            style={{ fontWeight: "bold" }}
+                                            className="text-[14px] text-neutral-700"
+                                        >
                                             Parcelas:
                                         </p>
-                                        <span>
-                                            24x de <span>R$ {productDetail?.price_24x?.toFixed(2).replace(".", ",")}</span>
-                                        </span>
-                                        <span>
-                                            ou em até 10x de R$ {productDetail?.price_10x?.toFixed(2).replace(".", ",")} sem juros direto na sua
-                                            Fatura Vivo
-                                        </span>
+
+                                        {isEquipment ? (
+                                            equipmentPayment && (
+                                                <span>
+                                                    {equipmentPayment.label}{" "}
+                                                    <span>
+                                                        R$ {equipmentPayment.value!.toFixed(2).replace(".", ",")}
+                                                    </span>
+                                                </span>
+                                            )
+                                        ) : (
+                                            <>
+                                                <span>
+                                                    24x de{" "}
+                                                    <span>
+                                                        R$ {productDetail?.price_24x
+                                                            ?.toFixed(2)
+                                                            .replace(".", ",")}
+                                                    </span>
+                                                </span>
+
+                                                <span>
+                                                    ou em até 10x de R${" "}
+                                                    {productDetail?.price_10x
+                                                        ?.toFixed(2)
+                                                        .replace(".", ",")}{" "}
+                                                    sem juros direto na sua Fatura Vivo
+                                                </span>
+                                            </>
+                                        )}
+
+
                                     </div>
                                 </div>
                             </div>

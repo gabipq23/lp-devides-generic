@@ -8,6 +8,7 @@ import { SelectPayment } from "../components/selectPayment";
 import SelectInsurance from "../components/selectInsurance";
 import { IDevices } from "@/interfaces/devices";
 import { IOrderResponse, Item } from "@/interfaces/order";
+import { usePartner } from "@/context/PartnerContext";
 
 type SelectedItemColor = { id: number; color: string };
 type SelectedItemQtd = { id: number; quantity: number };
@@ -45,6 +46,7 @@ export const ItensListLargeScreen = ({
   updatePossivelProspectSeguro: (value: number) => void;
   updateParcelamentoValues: (installments: number) => void;
 }) => {
+  const { type } = usePartner();
   return (
     <div className="hidden md:block">
       {/* Header das informações */}
@@ -53,9 +55,10 @@ export const ItensListLargeScreen = ({
         <p className="w-24 text-center  ">Tipo</p>
         <p className="w-28 text-center ">Marca</p>
         <p className="w-58 text-center ">Modelo</p>
-        <p className="w-34  text-center  flex items-center cursor-pointer gap-1 justify-center">
-          Preferência de Cor{" "}
-          {/* <div className="cursor-poiter">
+        {type === "aparelhos" && (
+          <p className="w-34  text-center  flex items-center cursor-pointer gap-1 justify-center">
+            Preferência de Cor{" "}
+            {/* <div className="cursor-poiter">
             <Tooltip
               title="A escolha de cor é uma indicação de preferência. Mas a consolidação do pedido na cor escolhida depende da disponibilidade no estoque no momento do fechamento efetivo do pedido."
               placement="top"
@@ -64,23 +67,25 @@ export const ItensListLargeScreen = ({
               <ExclamationCircleOutlined />
             </Tooltip>
           </div> */}
-        </p>
-        <p className="w-28  text-center ">Quantidade</p>
+          </p>
+        )}
 
-        <p className="w-36 text-center flex items-center cursor-pointer gap-1 justify-center ">
-          Seguro{" "}
-          <div className="cursor-poiter">
-            <Tooltip
-              title="
+        <p className="w-28  text-center ">Quantidade</p>
+        {type === "aparelhos" && (
+          <p className="w-36 text-center flex items-center cursor-pointer gap-1 justify-center ">
+            Seguro{" "}
+            <div className="cursor-poiter">
+              <Tooltip
+                title="
                   Roubo, Furto, Simples e Qualificado ou
       Roubo, Furto, Simples, Qualificado e Danos"
-              placement="top"
-              styles={{ body: { fontSize: "12px" } }}
-            >
-              <ExclamationCircleOutlined />
-            </Tooltip>
-          </div>
-        </p>
+                placement="top"
+                styles={{ body: { fontSize: "12px" } }}
+              >
+                <ExclamationCircleOutlined />
+              </Tooltip>
+            </div>
+          </p>)}
         <p className="w-32 text-center  ">Parcela (R$) </p>
         <p className="w-12 text-center  "> </p>
       </div>
@@ -113,7 +118,7 @@ export const ItensListLargeScreen = ({
             <React.Fragment key={product.item_id}>
               <div className="flex items-center justify-between py-4 text-[14px]">
                 <p className="text-[14px]  font-semibold w-30 text-center">
-                  {product.sap_code}
+                  {product.sap_code || "-"}
                 </p>
                 <p className="text-[14px]  font-semibold w-24 text-center">
                   {product.type}
@@ -124,15 +129,16 @@ export const ItensListLargeScreen = ({
                 <p className="text-[14px]   font-semibold w-58 text-center">
                   {product.model || "-"}
                 </p>
-                <div className="text-[14px]   font-semibold w-34 flex justify-center items-center text-center">
-                  <SelectChangeColor
-                    value={selectedProductColor || ""}
-                    colorsOptions={colorsOptions}
-                    onChange={(newColor) =>
-                      updateItemColor(product.item_id, newColor)
-                    }
-                  />
-                </div>
+                {type === "aparelhos" && (
+                  <div className="text-[14px]   font-semibold w-34 flex justify-center items-center text-center">
+                    <SelectChangeColor
+                      value={selectedProductColor || ""}
+                      colorsOptions={colorsOptions}
+                      onChange={(newColor) =>
+                        updateItemColor(product.item_id, newColor)
+                      }
+                    />
+                  </div>)}
                 <div className="w-28   flex justify-center items-center  text-center">
                   <Count
                     onRemove={() =>
@@ -145,26 +151,28 @@ export const ItensListLargeScreen = ({
                     onChange={(newQtd) => updateItemQuantity(product.item_id, newQtd)}
                   />
                 </div>
-                <span className="w-36 text-center ">
-                  {products.find((p) => p.id === product.device_id)
-                    &&
-                    (products.find((p) => p.id === product.device_id)?.insurance_theft ||
-                      products.find((p) => p.id === product.device_id)?.insurance_theft_damages) ?
-                    (
-                      <SelectInsurance
-                        product={products.find((p) => p.id === product.device_id)}
-                        itemId={product.item_id}
-                        saveSelectedSeguro={saveSelectedSeguro}
-                        item={product}
-                        removeInsurance={removeInsurance}
-                        purchaseById={purchaseById}
-                        updatePossivelProspectSeguro={updatePossivelProspectSeguro}
-                      />
-                    )
-                    : ("-")}
+                {type === "aparelhos" && (
+                  <span className="w-36 text-center ">
+                    {products.find((p) => p.id === product.device_id)
+                      &&
+                      (products.find((p) => p.id === product.device_id)?.insurance_theft ||
+                        products.find((p) => p.id === product.device_id)?.insurance_theft_damages) ?
+                      (
+                        <SelectInsurance
+                          product={products.find((p) => p.id === product.device_id)}
+                          itemId={product.item_id}
+                          saveSelectedSeguro={saveSelectedSeguro}
+                          item={product}
+                          removeInsurance={removeInsurance}
+                          purchaseById={purchaseById}
+                          updatePossivelProspectSeguro={updatePossivelProspectSeguro}
+                        />
+                      )
+                      : ("-")}
 
 
-                </span>
+                  </span>)}
+
                 <p className="text-[16px]  text-neutral-700 font-semibold w-32 text-center">
                   R${" "}
                   {(

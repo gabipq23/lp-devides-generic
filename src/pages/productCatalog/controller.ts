@@ -1,4 +1,5 @@
 import { useCreateOrResumeCart } from "@/hooks/useCreateOrResumeCart";
+import { usePartner } from "@/context/PartnerContext";
 import { Fingerprint } from "@/utils/getFingerprintInfo";
 
 type SendInfoValues = {
@@ -12,6 +13,7 @@ type SendInfoValues = {
 };
 
 export function useAppController() {
+  const { type } = usePartner();
   const { createOrResumeCart, isCreatingChartLoading } = useCreateOrResumeCart({
     createChartCancelQueryKey: ["purchaseById"],
     createChartInvalidateQueryKey: ["purchaseById"],
@@ -21,8 +23,8 @@ export function useAppController() {
     const result = await createOrResumeCart({
       formValues,
       productDetail: null,
-      landingPage: "aparelhos",
-      category: "aparelhos",
+      landingPage: type,
+      category: type,
     });
 
     return result.success;

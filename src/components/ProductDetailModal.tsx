@@ -3,6 +3,75 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { IDevices } from "@/interfaces/devices";
 import InsuranceDiv from "@/pages/productCatalog/components/insuranceDiv";
+type InstallmentOption = {
+    installments: number;
+    price: number;
+    label: string;
+};
+
+function getInstallmentOptions(
+    product: IDevices | null
+): InstallmentOption[] {
+    if (!product) return [];
+
+    const options: InstallmentOption[] = [];
+
+    // À vista
+    if (product.price != null && product.price > 0) {
+        options.push({
+            installments: 1,
+            price: product.price,
+            label: "À vista",
+        });
+    }
+
+    // 10x
+    if (product.price_10x != null && product.price_10x > 0) {
+        options.push({
+            installments: 10,
+            price: product.price_10x,
+            label: "10x",
+        });
+    }
+
+    // 12x
+    if (product.price_12x != null && product.price_12x > 0) {
+        options.push({
+            installments: 12,
+            price: product.price_12x,
+            label: "12x",
+        });
+    }
+
+    // 24x
+    if (product.price_24x != null && product.price_24x > 0) {
+        options.push({
+            installments: 24,
+            price: product.price_24x,
+            label: "24x",
+        });
+    }
+
+    // 36x
+    if (product.price_36x != null && product.price_36x > 0) {
+        options.push({
+            installments: 36,
+            price: product.price_36x,
+            label: "36x",
+        });
+    }
+
+    // 48x
+    if (product.price_48x != null && product.price_48x > 0) {
+        options.push({
+            installments: 48,
+            price: product.price_48x,
+            label: "48x",
+        });
+    }
+
+    return options;
+}
 
 type AddItemVariables = {
     id: string;
@@ -59,9 +128,17 @@ export default function ProductDetailModal({
     const fallbackImage = getFallbackImage(productDetail);
     const showCarousel = images.length > 0;
     const showFallbackImage = !showCarousel && !!fallbackImage;
-    const normalizedInstallments = [1, 10, 12, 24].includes(Number(parcelamentoQtd))
-        ? Number(parcelamentoQtd)
-        : 24;
+    const installmentOptions = useMemo(
+        () => getInstallmentOptions(productDetail),
+        [productDetail]
+    );
+
+    const normalizedInstallments =
+        installmentOptions.find(
+            (option) => option.installments === Number(parcelamentoQtd)
+        )?.installments ??
+        installmentOptions[installmentOptions.length - 1]?.installments ??
+        1;
 
     useEffect(() => {
         setCurrentIndex(0);

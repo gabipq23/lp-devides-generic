@@ -13,6 +13,8 @@ import { CartLink } from "./components/cartLink";
 import { isCatalogPath } from "@/configs/partnerRuntime";
 import { OtherTypeSection } from "./components/otherTypeSection";
 import { usePartner } from "@/context/PartnerContext";
+import TechRental from "./techRental/techRental";
+import TechResale from "./techResale/techResale";
 
 function ProductCatalog() {
   const [queryClient] = useState(() => new QueryClient());
@@ -50,6 +52,8 @@ function ProductCatalog() {
           <LayoutDefault>
             <Banner />
             {type === "aparelhos" && <PhoneHighlights />}
+            {type === "equipamentos" && <TechRental />}
+            {type === "equipamentos" && <TechResale />}
 
             {typeof window !== "undefined" && showScroll && (
               <Button
@@ -72,8 +76,8 @@ function ProductCatalog() {
                 <ArrowBigUp size={18} className="fill-white" />
               </Button>
             )}
+            {type === "aparelhos" && <InfoBanner />}
 
-            <InfoBanner />
             {type === "aparelhos" && <PhoneOffers />}
             {type === "aparelhos" && <AccessoriesOffers />}
             <OtherTypeSection />

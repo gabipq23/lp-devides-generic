@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { ProductsService } from "@/services/products";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { IDevices, IDevicesResponse } from "@/interfaces/devices";
 import { useAddItemInCartMutation } from "@/hooks/useAddItemInCartMutation";
 import { useBrandFilter } from "@/hooks/useBrandFilter";
@@ -8,28 +8,17 @@ import { useCreateOrResumeCart } from "@/hooks/useCreateOrResumeCart";
 import { useDisclosure } from "@/hooks/useDisclosure";
 import { Fingerprint } from "@/utils/getFingerprintInfo";
 import { usePartner } from "@/context/PartnerContext";
-// import { useSendProductIdMutation } from "@/hooks/useSendProductIdMutation";
 
-type SendInfoValues = {
-  cnpj: string;
-  full_name: string;
-  phone: string;
-  client_ip: string;
-  fingerprint: Fingerprint;
-  url: string;
-  lp_url: string;
-};
-
-export function useAccessoriesOffersController() {
+export function useTechRentalController() {
   const [selectedProductDetail, setSelectedProductDetail] =
     useState<IDevices | null>(null);
   const modal = useDisclosure();
   const modalBot = useDisclosure();
-  const { type } = usePartner();
-
-  const id = sessionStorage.getItem("carrinhoId");
   const parcelamentoQtd = sessionStorage.getItem("parcelamentoQTD");
+  const id = sessionStorage.getItem("carrinhoId");
+  const queryClient = useQueryClient();
   const productsService = new ProductsService();
+  const { type } = usePartner();
 
   const productsQuery = useQuery<IDevicesResponse>({
     refetchOnWindowFocus: false,
@@ -40,9 +29,7 @@ export function useAccessoriesOffersController() {
     },
   });
 
-  const products = productsQuery.data?.devices.filter(
-    (product) => product.type !== "Smartphone" && product.type !== null,
-  );
+  const products = productsQuery.data?.devices;
 
   const { selectedBrand, resetSelectedBrand, items, productFiltered } =
     useBrandFilter(products);
@@ -55,8 +42,10 @@ export function useAccessoriesOffersController() {
 
   const { createOrResumeCart, isCreatingChartLoading } =
     useCreateOrResumeCart<IDevices | null>({
-      addItemToExistingCart: ({ id: cartId, data }) =>
-        addItemInCartAsync({ id: cartId, data }),
+      addItemToExistingCart: async ({ id: cartId, data }) => {
+        await addItemInCartAsync({ id: cartId, data });
+        await queryClient.invalidateQueries({ queryKey: ["clients"] });
+      },
       getExistingCartItemData: (product) => ({
         device_id: product.id,
         quantity: 1,
@@ -67,12 +56,9 @@ export function useAccessoriesOffersController() {
 
   const addItemInChart = addItemInCart;
 
-  // const { sendProductId } = useSendProductIdMutation({
-  //   sendProductIdFn: (productId) => productsService.sendProductId(productId),
-  // });
-
   const showModal = modal.open;
   const closeModal = modal.close;
+
   const showModalBot = modalBot.open;
   const closeModalBot = modalBot.close;
 
@@ -81,36 +67,45 @@ export function useAccessoriesOffersController() {
   };
 
   const updateData = async (
-    formValues: SendInfoValues,
+    formValues: {
+      cnpj: string;
+      full_name: string;
+      phone: string;
+      client_ip: string;
+      fingerprint: Fingerprint;
+      url: string;
+      lp_url: string;
+    },
     productDetail: IDevices | null,
   ) => {
     await createOrResumeCart({
       formValues,
       productDetail,
       requireProduct: true,
-      landingPage: "aparelhos",
+      landingPage: "equipamentos",
+      category: "equipamentos",
     });
   };
 
   return {
+    products,
     productFiltered,
     selectedBrand,
-    parcelamentoQtd,
     resetSelectedBrand,
-    addItemInChart,
     items,
     isModalOpen: modal.isOpen,
     showModal,
     closeModal,
-    selectedProductDetail,
-    changeSelectedProductDetail,
-    id,
-    // sendProductId,
     isModalBotOpen: modalBot.isOpen,
     showModalBot,
     closeModalBot,
+    selectedProductDetail,
+    changeSelectedProductDetail,
+    addItemInChart,
+    parcelamentoQtd,
+    id,
+    isAddItemInChartLoading,
     updateData,
     isCreatingChartLoading,
-    isAddItemInChartLoading,
   };
 }

@@ -10,75 +10,76 @@ export default function SubHeader() {
   const id = sessionStorage.getItem("carrinhoId");
   const pedidoId = usePedidoStore((state) => state.pedidoId);
   const runtime = usePartner();
-
+  const { type } = usePartner();
   return (
     <div className="relative z-2">
       <div className="">
         <div className="flex flex-col md:flex-row justify-between  md:items-center p-2 bg-[#660099] px-6 md:px-16 lg:px-20">
-          <div className="flex flex-row md:flex-row lg:flex-row items-center justify-center lg:justify-between gap-4">
-            <div className="flex gap-4">
-              <a
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "destaques" } });
-                  document
-                    .getElementById("destaques")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
-                href="#destaques"
-                className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
-              >
-                Destaques
-              </a>
-              <a
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "super-ofertas" } });
+          {type === "aparelhos" && (
+            <div className="flex flex-row md:flex-row lg:flex-row items-center justify-center lg:justify-between gap-4">
+              <div className="flex gap-4">
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "destaques" } });
+                    document
+                      .getElementById("destaques")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  href="#destaques"
+                  className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
+                >
+                  Destaques
+                </a>
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "super-ofertas" } });
 
-                  document
-                    .getElementById("super-ofertas")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
-                href="#super-ofertas"
-                className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
-              >
-                Ofertas
-              </a>
-            </div>
-            <div className="flex gap-4">
-              <div className="items-center justify-center text-center flex">
-                {window.innerWidth < 500 ? (
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "acessorios" } });
-                      document
-                        .getElementById("acessorios")
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    href="#acessorios"
-                    className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
-                  >
-                    Mais Produtos
-                  </a>
-                ) : (
-                  <a
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "acessorios" } });
-
-                      document
-                        .getElementById("acessorios")
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    href="#acessorios"
-                    className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
-                  >
-                    Tablets, Smartwatches e Acessórios
-                  </a>
-                )}
+                    document
+                      .getElementById("super-ofertas")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  href="#super-ofertas"
+                  className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
+                >
+                  Ofertas
+                </a>
               </div>
-              {/* {(version === "0" || version === "3") && (
+              <div className="flex gap-4">
+                <div className="items-center justify-center text-center flex">
+                  {window.innerWidth < 500 ? (
+                    <a
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "acessorios" } });
+                        document
+                          .getElementById("acessorios")
+                          ?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      href="#acessorios"
+                      className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
+                    >
+                      Mais Produtos
+                    </a>
+                  ) : (
+                    <a
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "acessorios" } });
+
+                        document
+                          .getElementById("acessorios")
+                          ?.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      href="#acessorios"
+                      className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
+                    >
+                      Tablets, Smartwatches e Acessórios
+                    </a>
+                  )}
+                </div>
+                {/* {(version === "0" || version === "3") && (
                 <div className="items-center justify-center text-center flex">
                   {window.innerWidth < 500 ? (
                     <a
@@ -105,8 +106,45 @@ export default function SubHeader() {
                   )}
                 </div>
               )} */}
+              </div>
             </div>
-          </div>
+          )}
+
+          {type === "equipamentos" && (
+            <div className="flex flex-row md:flex-row lg:flex-row items-center justify-center lg:justify-between gap-4">
+              <div className="flex gap-4">
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "locacao" } });
+                    document
+                      .getElementById("locacao")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  href="#locacao"
+                  className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
+                >
+                  Locação
+                </a>
+                <a
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(buildPartnerPath(runtime, "catalog"), { state: { scrollTo: "revenda" } });
+
+                    document
+                      .getElementById("revenda")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  href="#revenda"
+                  className="text-[14px] text-neutral-300 hover:text-neutral-100 hover:underline"
+                >
+                  Revenda
+                </a>
+              </div>
+
+            </div>
+          )}
+
 
           {/* <div className="text-neutral-300 relative flex mt-4 md:mt-0 justify-end hover:text-neutral-100 ">
             {sessionStorage.getItem("carrinhoId") !== null ? (

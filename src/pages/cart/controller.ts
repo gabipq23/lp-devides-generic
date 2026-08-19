@@ -24,6 +24,7 @@ export function usePurchaseController({ id }: { id: string | undefined }) {
   const purchaseService = new PurchaseService();
   const queryClient = useQueryClient();
   const partnerRuntime = usePartner();
+  const { type } = usePartner();
 
   const { data: purchaseByIdQuery, isFetching: isPurchaseDataLoading } =
     useQuery<any | null>({
@@ -37,13 +38,15 @@ export function usePurchaseController({ id }: { id: string | undefined }) {
         return response ?? null;
       },
     });
-
   const productsQuery = useQuery<IDevicesResponse>({
     refetchOnWindowFocus: false,
-    queryKey: ["products"],
+    queryKey: ["products", type],
     queryFn: async (): Promise<IDevicesResponse> => {
-      const response = await purchaseService.allProducts();
-      return response;
+      const response = await purchaseService.allProducts(type);
+
+      return {
+        ...response,
+      };
     },
   });
 

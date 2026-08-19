@@ -23,9 +23,9 @@ export class PurchaseService {
   }
 
   // OK
-  async allProducts(): Promise<IDevicesResponse> {
+  async allProducts(category: string): Promise<IDevicesResponse> {
     const res = await api.get(`/telecom/devices`, {
-      params: { is_online: true },
+      params: { is_online: true, category },
     });
     return res.data;
   }

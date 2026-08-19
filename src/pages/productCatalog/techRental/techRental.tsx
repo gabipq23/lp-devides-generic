@@ -1,12 +1,13 @@
-import { Button, ConfigProvider, Dropdown, Tooltip } from "antd";
-import { useTechHighlightsController } from "./controller";
+import { Button, ConfigProvider, Dropdown } from "antd";
+
 import ProductDetailModal from "@/components/ProductDetailModal";
 import SendInfoModalBase from "@/components/SendInfoModal";
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { CloseOutlined } from "@ant-design/icons";
 import { IDevices } from "@/interfaces/devices";
+import { useTechRentalController } from "./controller";
 
-export default function TechHighlights() {
+export default function TechRental() {
     const {
         productFiltered,
         items,
@@ -26,65 +27,33 @@ export default function TechHighlights() {
         isAddItemInChartLoading,
         updateData,
         isCreatingChartLoading,
-    } = useTechHighlightsController();
+    } = useTechRentalController();
 
     const [loadingProductId, setLoadingProductId] = useState<number | null>(null);
-    const [entrySeed] = useState<number>(() => Date.now());
 
-    const productVersion = useMemo(() => {
-        if (!productFiltered) return [];
-
-        const filtered = productFiltered.filter((p) => p.online);
-
-        const seededShuffle = (arr: IDevices[], seed: number): IDevices[] => {
-            const result = [...arr];
-            let t = seed >>> 0;
-
-            const nextRandom = () => {
-                t += 0x6d2b79f5;
-                let r = Math.imul(t ^ (t >>> 15), 1 | t);
-                r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
-                return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
-            };
-
-            for (let i = result.length - 1; i > 0; i--) {
-                const j = Math.floor(nextRandom() * (i + 1));
-                [result[i], result[j]] = [result[j], result[i]];
-            }
-
-            return result;
-        };
-
-        return seededShuffle(filtered, entrySeed).slice(0, 8);
-    }, [productFiltered, entrySeed]);
-
-    // equipamentos usa planos de parcelamento diferentes (12x/24x/36x/48x); exibe todos os disponíveis
+    const productVersion = productFiltered?.filter(
+        (p) => p.online && p.offer_type === "Locação"
+    ) ?? [];
     const getPriceOptions = (product: IDevices) => {
         const installmentOptions = [
-            { installments: 12, value: product.price_12x },
-            { installments: 24, value: product.price_24x },
-            { installments: 36, value: product.price_36x },
             { installments: 48, value: product.price_48x },
-        ].filter((option) => typeof option.value === "number" && option.value! > 0);
+            { installments: 36, value: product.price_36x },
+            { installments: 24, value: product.price_24x },
+            { installments: 12, value: product.price_12x },
+        ];
 
-        const cashPrice = typeof product.price === "number" && product.price > 0 ? product.price : null;
-
-        return { cashPrice, installmentOptions };
-    };
-
-    const getTooltipMessage = (product: IDevices) => {
-        const { insurance_theft, insurance_theft_damages } = product;
-        const validValues = [insurance_theft, insurance_theft_damages].filter(
-            (value) => typeof value === "number" && value > 0,
+        const availableInstallment = installmentOptions.find(
+            (option) => typeof option.value === "number" && option.value > 0
         );
 
-        if (validValues.length === 0) {
-            return "Esse item não possui seguro disponível.";
-        }
 
-        const lowerInsuranceValue = Math.min(...validValues);
-        return `Seguro para este item: a partir de R$ ${lowerInsuranceValue.toFixed(2).replace(".", ",")}`;
+        return {
+            installmentOptions: availableInstallment
+                ? [availableInstallment]
+                : [],
+        };
     };
+
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -101,7 +70,7 @@ export default function TechHighlights() {
     return (
         <>
             <div className="flex items-center justify-center self-center w-full my-10 mt-4 flex-wrap">
-                <div id="destaques-equipamentos" className="flex items-center self-center justify-center w-full my-10 mt-4 flex-wrap">
+                <div id="locacao" className="flex items-center self-center justify-center w-full my-10 mt-4 flex-wrap">
                     <div className="flex flex-col gap-6 items-center justify-center self-center flex-wrap w-full mx-20">
                         <div className="flex justify-between flex-wrap w-full items-center">
                             <h1
@@ -118,7 +87,7 @@ export default function TechHighlights() {
                                     wordBreak: "break-word",
                                 }}
                             >
-                                Destaques
+                                Locação
                             </h1>
 
                             <div className="flex-shrink-0 md:w-[160px] sm:w-[160px] lg:w-[200px]">
@@ -147,15 +116,15 @@ export default function TechHighlights() {
                         </div>
 
                         <div
-                            className="grid gap-4 w-full justify-items-center"
+                            className="grid gap-6 w-full"
                             style={{
-                                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
                             }}
                         >
                             {productVersion?.map((product: IDevices, index: number) => {
                                 if (!product.online) return null;
 
-                                const { cashPrice, installmentOptions } = getPriceOptions(product);
+                                const { installmentOptions } = getPriceOptions(product);
                                 const productImage = product.image?.[0];
 
                                 return (
@@ -174,10 +143,6 @@ export default function TechHighlights() {
                                                     </span>
                                                 </Tooltip>
                                             )} */}
-                                            <p className="text-[12px] self-start text-gray-800 flex bg-neutral-100 py-1 mb-2 px-2 rounded-[2px]"
-                                                style={{ width: "fit-content" }}>
-                                                {product.offer_type ? ` · ${product.offer_type}` : ""}
-                                            </p>
 
                                             <div className="w-36 h-36 flex items-center justify-center rounded">
                                                 {productImage ? (
@@ -195,7 +160,7 @@ export default function TechHighlights() {
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-col gap-[7px]">
+                                        <div className="flex flex-col gap-[7px] w-full h-full">
                                             <span className="text-[15px] flex items-center h-[65px] text-gray-800">
                                                 {product.model}
                                             </span>
@@ -210,14 +175,7 @@ export default function TechHighlights() {
                                             <hr className="border-t border-gray-300 my-2 w-full" />
 
                                             <div className="flex flex-col gap-[2px]">
-                                                {cashPrice && (
-                                                    <span className="text-gray-500 text-[14px]">
-                                                        à vista{" "}
-                                                        <span className="text-gray-800 font-bold text-[16px]">
-                                                            R$ {cashPrice.toFixed(2).replace(".", ",")}
-                                                        </span>
-                                                    </span>
-                                                )}
+
                                                 {installmentOptions.map((option) => (
                                                     <span key={option.installments} className="text-gray-500 text-[14px]">
                                                         {option.installments}x de{" "}
@@ -254,32 +212,7 @@ export default function TechHighlights() {
                                                     >
                                                         + detalhes
                                                     </Button>
-                                                    {(product?.insurance_theft_damages || product?.insurance_theft) && (
-                                                        <Tooltip title={getTooltipMessage(product)} placement="top" styles={{ body: { fontSize: "11px" } }}>
-                                                            <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
-                                                                <Button
-                                                                    type="link"
-                                                                    style={{
-                                                                        padding: 3,
-                                                                        color: "#660099",
-                                                                        textDecoration: "underline",
-                                                                        textUnderlineOffset: "3px",
-                                                                    }}
-                                                                    onClick={() => {
-                                                                        showModal();
-                                                                        changeSelectedProductDetail(product);
-                                                                    }}
-                                                                >
-                                                                    <img
-                                                                        width={16}
-                                                                        src="/assets/seguro-favicon.png"
-                                                                        style={{ display: "block", marginLeft: "auto" }}
-                                                                    />{" "}
-                                                                    Seguro
-                                                                </Button>
-                                                            </div>
-                                                        </Tooltip>
-                                                    )}
+
                                                 </ConfigProvider>
                                             </div>
 

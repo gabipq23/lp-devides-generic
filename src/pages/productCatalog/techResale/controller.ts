@@ -9,7 +9,7 @@ import { useDisclosure } from "@/hooks/useDisclosure";
 import { Fingerprint } from "@/utils/getFingerprintInfo";
 import { usePartner } from "@/context/PartnerContext";
 
-export function useTechHighlightsController() {
+export function useTechResaleController() {
   const [selectedProductDetail, setSelectedProductDetail] =
     useState<IDevices | null>(null);
   const modal = useDisclosure();

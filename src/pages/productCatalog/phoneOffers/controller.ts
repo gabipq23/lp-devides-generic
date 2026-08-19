@@ -95,6 +95,7 @@ export function usePhoneOffersController() {
   };
 
   return {
+    productsQuery,
     productFiltered,
     selectedBrand,
     resetSelectedBrand,

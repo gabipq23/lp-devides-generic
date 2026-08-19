@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import InfoBanner from "./infoBanner/infoBanner";
 import PhoneOffers from "./phoneOffers/phoneOffers";
 import PhoneHighlights from "./phoneHighlights/phoneHighlights";
-import TechHighlights from "./techHighlights/techHighlights";
 import AccessoriesOffers from "./accessoriesOffers/accessoriesOffers";
 import { ArrowBigUp } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -14,6 +13,8 @@ import { CartLink } from "./components/cartLink";
 import { isCatalogPath } from "@/configs/partnerRuntime";
 import { OtherTypeSection } from "./components/otherTypeSection";
 import { usePartner } from "@/context/PartnerContext";
+import TechRental from "./techRental/techRental";
+import TechResale from "./techResale/techResale";
 
 function ProductCatalog() {
   const [queryClient] = useState(() => new QueryClient());
@@ -51,7 +52,8 @@ function ProductCatalog() {
           <LayoutDefault>
             <Banner />
             {type === "aparelhos" && <PhoneHighlights />}
-            {type === "equipamentos" && <TechHighlights />}
+            {type === "equipamentos" && <TechRental />}
+            {type === "equipamentos" && <TechResale />}
 
             {typeof window !== "undefined" && showScroll && (
               <Button
@@ -74,8 +76,8 @@ function ProductCatalog() {
                 <ArrowBigUp size={18} className="fill-white" />
               </Button>
             )}
+            {type === "aparelhos" && <InfoBanner />}
 
-            <InfoBanner />
             {type === "aparelhos" && <PhoneOffers />}
             {type === "aparelhos" && <AccessoriesOffers />}
             <OtherTypeSection />

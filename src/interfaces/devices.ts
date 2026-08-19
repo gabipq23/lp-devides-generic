@@ -47,13 +47,16 @@ export interface IDevices {
 // Ficha técnica: category:aparelhos usa a estrutura detalhada (nested); category:equipamentos usa "tabela" plana + campos soltos abaixo. Todos os campos são opcionais pois variam por categoria/produto.
 interface FichaTecnica {
   tabela?: {
+    Imagens?: string[];
+
     [categoria: string]:
       | string
+      | string[]
       | {
           [caracteristica: string]: string;
-        };
+        }
+      | undefined;
   };
-
   // campos planos usados em category:equipamentos
   screen?: string;
   weight?: string;

@@ -121,12 +121,12 @@ export function OtherTypeSection() {
                                                 {product.model}
                                             </h3>
 
-                                            {installment && (
+                                            {installment?.value != null && (
                                                 <span className="text-xs text-neutral-300 mt-1">
                                                     {installment.installments}x de{" "}
                                                     <strong className="text-white">
                                                         R${" "}
-                                                        {installment?.value
+                                                        {installment.value
                                                             .toFixed(2)
                                                             .replace(".", ",")}
                                                     </strong>

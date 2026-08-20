@@ -2,11 +2,15 @@ import { Carousel, ConfigProvider } from "antd";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 import type { CarouselRef } from "antd/es/carousel";
-import { defaultBanner } from "@/configs/partnerRuntime";
+import { usePartner } from "@/context/PartnerContext";
+import { defaultBannerByType } from "@/configs/partnerRuntime";
 
 function Banner() {
-  const imagesMobile = defaultBanner.mobile;
-  const imagesWeb = defaultBanner.desktop;
+  const { type } = usePartner();
+
+  const banners = defaultBannerByType[type];
+  const imagesMobile = banners.mobile;
+  const imagesWeb = banners.desktop;
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {

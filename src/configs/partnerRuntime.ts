@@ -134,16 +134,22 @@ export const productTypeRegistry: Record<ProductType, ProductTypeConfig> = {
     otherSectionCta: "Ver aparelhos",
   },
 };
+export const defaultBannerByType: Record<ProductType, PartnerBannerSet> = {
+  aparelhos: {
+    mobile: [
+      "/assets/banner2026/banner vivo empresas-iphone16e-mobile.jpeg",
+      "/assets/banner vivo empresas - zurich mobile.jpg",
+    ],
+    desktop: [
+      "/assets/banner2026/banner vivo empresas-iphone16e-desk.jpeg",
+      "/assets/banner vivo empresas - zurich.jpg",
+    ],
+  },
 
-export const defaultBanner: PartnerBannerSet = {
-  mobile: [
-    "/assets/banner2026/banner vivo empresas-iphone16e-mobile.jpeg",
-    "/assets/banner vivo empresas - zurich mobile.jpg",
-  ],
-  desktop: [
-    "/assets/banner2026/banner vivo empresas-iphone16e-desk.jpeg",
-    "/assets/banner vivo empresas - zurich.jpg",
-  ],
+  equipamentos: {
+    mobile: ["/assets/banners/equipamentos-mobile.jpg"],
+    desktop: ["/assets/banners/equipamentos-desktop.jpg"],
+  },
 };
 
 export const vivoPartnerConfig: PartnerConfig = {

@@ -28,7 +28,8 @@ declare global {
     };
   }
 }
-// removido temporariamente
+
+// REMOVIDO TEMPORARIAMENTE
 // function WhatsAppLink() {
 //   const [cnpj, setCnpj] = useState("");
 //   const [nome, setNome] = useState("");
@@ -171,6 +172,7 @@ function App() {
             </div>
           )} */}
 
+            {/* // REMOVIDO TEMPORARIAMENTE */}
             {/* {carrinhoId && <WhatsAppLink />} */}
 
             <SendInfoModal
@@ -257,7 +259,9 @@ function App() {
               </div>
             )}
 
+            {/* // REMOVIDO TEMPORARIAMENTE */}
             {/* {carrinhoId && <WhatsAppLink />} */}
+
             <SendInfoModal
               setShowModal={setShowModal}
               updateData={updateData}

@@ -35,10 +35,10 @@ function FooterBanner() {
       </div>
       <div className="flex md:border-l-2 md:border-neutral-300 lg:border-l-2 lg:border-neutral-300 pl-10 flex-col gap-6 text-neutral-300 text-[13px] w-2/3 text-start ">
         <p>
-          {partner.partner_name}
+          <img src={partner.logo_url} alt="Partner Logo" className="h-10" />
         </p>
         <p>
-          Parceiro Autorizados Vivo Empresas
+          Parceiro autorizado Vivo Empresas
         </p>
         <p>
 

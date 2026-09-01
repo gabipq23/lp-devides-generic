@@ -131,7 +131,7 @@ export default function SendInfoModalBase({
             footer={null}
             width={width}
         >
-            <div className="flex flex-wrap sm:flex-wrap md:flex-nowrap lg:flex-nowrap gap-2 min-h-[220px] justify-center">
+            <div className="flex flex-wrap sm:flex-wrap md:flex-nowrap lg:flex-nowrap gap-2 min-h-[360px] justify-center">
                 <div
                     className={`text-[#666666] mt-2 overflow-y-auto max-h-full scrollbar scrollbar-thin ${isSubmitting ? "pointer-events-none" : ""
                         }`}
